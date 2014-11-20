@@ -1,0 +1,9 @@
+enum RotationTypes
+{
+	ROTATE_LEFT = 2,
+	ROTATE_RIGHT = 3,
+	ROTATE_UP = 0,
+	ROTATE_DOWN = 1,
+	TURN_LEFT = 4,
+	TURN_RIGHT = 5
+};
