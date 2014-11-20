@@ -32,6 +32,9 @@ public:
     
     Platform::String^ OnHitObject(int x, int y);
 
+	void rotateObject(int rotationType);
 private:
     std::vector<VSD3DStarter::Mesh*> m_meshModels;
+
+	
 };
