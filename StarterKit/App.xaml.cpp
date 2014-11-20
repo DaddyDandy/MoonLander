@@ -13,7 +13,7 @@
 #include "pch.h"
 #include "DirectXPage.xaml.h"
 
-using namespace MoonLander;
+using namespace StarterKit;
 
 using namespace Platform;
 using namespace Windows::ApplicationModel;

@@ -32,7 +32,6 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
-    <ProjectName>MoonLander</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -138,7 +137,6 @@
       <DependentUpon>DirectXPage.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="..\Shared\VSD3DStarter.h" />
-    <ClInclude Include="ShipRotationTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -184,9 +182,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="StarterKit_TemporaryKey.pfx" />
-  </ItemGroup>
-  <ItemGroup>
-    <MeshContentTask Include="Moon.fbx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

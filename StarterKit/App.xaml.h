@@ -15,7 +15,7 @@
 #include "App.g.h"
 #include "DirectXPage.xaml.h"
 
-namespace MoonLander
+namespace StarterKit
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.

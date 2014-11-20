@@ -15,7 +15,7 @@
 #include "..\Shared\Game.h"
 #include "..\Shared\BasicTimer.h"
 
-namespace MoonLander
+namespace StarterKit
 {
     /// <summary>
     /// A DirectX page that can be used on its own.  Note that it may not be used within a Frame.
@@ -38,8 +38,7 @@ namespace MoonLander
         void OnDisplayContentsInvalidated(Platform::Object^ sender);
         void OnRendering(Object^ sender, Object^ args);
         void OnTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
-		void OnKeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
-
+                
         Windows::Foundation::EventRegistrationToken m_eventToken;
 
         Game^ m_renderer;

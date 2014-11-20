@@ -16,35 +16,22 @@
 #include "VSD3DStarter.h"
 #include "GameBase.h"
 
-#include "ShipRotationTypes.h"
-
 ref class Game sealed : public GameBase
 {
 public:
-    Game();	
+    Game();
 
 private:
-    ~Game();	
+    ~Game();
 
 public:
     virtual void CreateWindowSizeDependentResources() override;
     virtual void Initialize() override;
     virtual void Update(float timeTotal, float timeDelta) override;
-    virtual void Render() override;    	
-
+    virtual void Render() override;
+    
     Platform::String^ OnHitObject(int x, int y);
-
-	void RotateShip(int rotationType);
 
 private:
     std::vector<VSD3DStarter::Mesh*> m_meshModels;
-
-	bool m_isAnimationRunning;
-	float m_animationTime;
-	DirectX::XMFLOAT3 m_initialRotation;
-	DirectX::XMFLOAT3 m_currentRotation;
-	DirectX::XMFLOAT3 m_targetRotation;
-	float m_currentTranslationY;
-
-	RotationTypes m_rotationType;
 };

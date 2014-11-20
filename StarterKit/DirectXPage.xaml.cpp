@@ -13,7 +13,7 @@
 #include "pch.h"
 #include "DirectXPage.xaml.h"
 
-using namespace MoonLander;
+using namespace StarterKit;
 
 using namespace Platform;
 using namespace Windows::Foundation;
@@ -99,30 +99,4 @@ void DirectXPage::LoadInternalState(IPropertySet^ state)
 
 void DirectXPage::OnTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
 {
-	m_renderer->RotateShip(RotationTypes::ROTATE_UP);
-}
-
-void DirectXPage::OnKeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
-{	
-	switch (e->Key)
-	{
-	case Windows::System::VirtualKey::W:
-		m_renderer->RotateShip(RotationTypes::ROTATE_UP);
-		break;
-	case Windows::System::VirtualKey::A:
-		m_renderer->RotateShip(RotationTypes::ROTATE_LEFT);
-		break;
-	case Windows::System::VirtualKey::D:
-		m_renderer->RotateShip(RotationTypes::ROTATE_RIGHT);
-		break;
-	case Windows::System::VirtualKey::S:
-		m_renderer->RotateShip(RotationTypes::ROTATE_DOWN);
-		break;
-	case Windows::System::VirtualKey::Q:
-		break;
-	case Windows::System::VirtualKey::E:
-		break;
-	case Windows::System::VirtualKey::Space:
-		break;
-	}
 }

@@ -16,12 +16,6 @@
     <Filter Include="Assets">
       <UniqueIdentifier>{ee36f2e1-16bb-4da1-b99f-3e93605e6c44}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shared\Ship">
-      <UniqueIdentifier>{7e9e02fb-5f6f-4348-85e6-f12e2392a748}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shared\Ship\Enums">
-      <UniqueIdentifier>{a516e623-683f-4398-9769-3432f851e8c6}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
@@ -68,9 +62,6 @@
     <ClInclude Include="..\Shared\DDSTextureLoader.h">
       <Filter>Shared</Filter>
     </ClInclude>
-    <ClInclude Include="ShipRotationTypes.h">
-      <Filter>Shared\Ship\Enums</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -94,10 +85,5 @@
     <Image Include="Assets\StoreLogo.png">
       <Filter>Assets</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <MeshContentTask Include="Moon.fbx">
-      <Filter>Assets</Filter>
-    </MeshContentTask>
   </ItemGroup>
 </Project>

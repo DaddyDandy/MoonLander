@@ -43,7 +43,7 @@ void Game::CreateWindowSizeDependentResources()
     // setup camera for our scene
     //
     m_graphics.GetCamera().SetViewport((UINT)m_windowBounds.Width, (UINT)m_windowBounds.Height);
-    m_graphics.GetCamera().SetPosition(XMFLOAT3(0.0f, 10.0f, -25.0f));
+    m_graphics.GetCamera().SetPosition(XMFLOAT3(0.0f, 6.0f, -18.0f));
     m_graphics.GetCamera().SetLookAt(XMFLOAT3(0.0f, 0.0f, 0.0f));
 
     float fovAngleY = 70.0f * XM_PI / 180.0f;
@@ -91,25 +91,10 @@ void Game::CreateWindowSizeDependentResources()
 
 void Game::Initialize()
 {
-	Mesh::LoadFromFile(m_graphics, L"Moon.cmo", L"", L"", m_meshModels);
 }
 
 void Game::Update(float timeTotal, float timeDelta)
 {
-	if (m_isAnimationRunning)
-	{
-		m_animationTime += timeDelta;
-		static const float animationDuration = 0.5f;
-		float animationProgress = std::min<float>(m_animationTime / animationDuration, 1.0f);
-		XMVECTOR initial = XMLoadFloat3(&m_initialRotation);
-		XMVECTOR target = XMLoadFloat3(&m_targetRotation);
-		XMVECTOR current = initial + animationProgress * (target - initial);
-		XMStoreFloat3(&m_currentRotation, current);
-		const float maxHeight = 2.0f;
-		m_currentTranslationY = 4.0f * maxHeight * animationProgress * (1 - animationProgress);
-		if (animationProgress >= 1.0f)
-			m_isAnimationRunning = false;
-	}
 }
 
 void Game::Render()
@@ -135,17 +120,14 @@ void Game::Render()
         0
         );
 
-
-	XMMATRIX transform = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_currentRotation));
-	transform *= XMMatrixTranslation(0.0f, m_currentTranslationY, 0.0f);
-	for (UINT i = 0; i < m_meshModels.size(); i++)
-	{
-		m_meshModels[i]->Render(m_graphics, transform);
-	}
-    // only enable MSAA if the device has enough power    
+    //
+    // only enable MSAA if the device has enough power
+    //
     if (m_d3dFeatureLevel >= D3D_FEATURE_LEVEL_10_0)
-    {        
-        // resolve multi-sample textures into single-sample textures        
+    {
+        //
+        // resolve multi-sample textures into single-sample textures
+        //
         UINT resourceIndex = D3D11CalcSubresource(0, 0, 1);
         m_d3dContext->ResolveSubresource(m_backBuffer.Get(), resourceIndex, m_backBufferMsaa.Get(), resourceIndex, DXGI_FORMAT_B8G8R8A8_UNORM);
     }
@@ -179,35 +161,4 @@ String^ Game::OnHitObject(int x, int y)
     }
 
     return result;
-}
-
-void Game::RotateShip(int rotateType)
-{	
-	float power = 0.1f;
-	m_initialRotation = m_currentRotation;
-	switch (rotateType)
-	{
-	case RotationTypes::ROTATE_LEFT:
-		m_targetRotation = XMFLOAT3(0.0f, power, 0.0f);
-		break;
-	case RotationTypes::ROTATE_RIGHT:
-		m_targetRotation = XMFLOAT3(0.0f, -1.0f * power, 0.0f);
-		break;
-	case RotationTypes::ROTATE_DOWN:
-		m_targetRotation = XMFLOAT3(power, 0.0f, 0.0f);
-		break;
-	case RotationTypes::ROTATE_UP:
-		m_targetRotation = XMFLOAT3(-1.0f * power, 0.0f, 0.0f);
-		break;
-	default:
-		break;
-	}	 
-
-	XMVECTOR target = XMLoadFloat3(&m_targetRotation);
-	XMVECTOR current = XMLoadFloat3(&m_currentRotation);
-	// учет текущего вращения 
-	target += XMVectorFloor(current / power) * power;
-	XMStoreFloat3(&m_targetRotation, target);
-	m_animationTime = 0.0f;
-	m_isAnimationRunning = true;
 }
