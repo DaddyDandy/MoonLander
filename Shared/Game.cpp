@@ -162,3 +162,8 @@ String^ Game::OnHitObject(int x, int y)
 
     return result;
 }
+
+void Game::rotateObject(int rotationType)
+{
+
+}
