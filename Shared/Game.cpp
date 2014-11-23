@@ -43,7 +43,7 @@ void Game::CreateWindowSizeDependentResources()
     // setup camera for our scene
     //
     m_graphics.GetCamera().SetViewport((UINT)m_windowBounds.Width, (UINT)m_windowBounds.Height);
-    m_graphics.GetCamera().SetPosition(XMFLOAT3(0.0f, 6.0f, -18.0f));
+    m_graphics.GetCamera().SetPosition(XMFLOAT3(0.0f, 12.0f, -22.0f));
     m_graphics.GetCamera().SetLookAt(XMFLOAT3(0.0f, 0.0f, 0.0f));
 
     float fovAngleY = 70.0f * XM_PI / 180.0f;
@@ -91,6 +91,8 @@ void Game::CreateWindowSizeDependentResources()
 
 void Game::Initialize()
 {
+	Mesh::LoadFromFile(m_graphics, L"StarShip.cmo", L"", L"", m_starShipModel);
+	Mesh::LoadFromFile(m_graphics, L"TheMoon.cmo", L"", L"", m_moonModel);
 }
 
 void Game::Update(float timeTotal, float timeDelta)
@@ -119,6 +121,13 @@ void Game::Render()
         1.0f,
         0
         );
+
+	XMMATRIX transform = XMMatrixIdentity();	
+	m_starShipModel[0]->Render(m_graphics, transform);
+	for (UINT i = 0; i < m_moonModel.size(); i++)
+	{		
+		m_moonModel[i]->Render(m_graphics, transform);
+	}
 
     //
     // only enable MSAA if the device has enough power

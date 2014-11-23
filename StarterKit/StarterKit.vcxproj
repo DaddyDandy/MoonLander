@@ -156,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Logo.png" />
+    <Image Include="Assets\Rock.jpg" />
     <Image Include="Assets\SmallLogo.png" />
     <Image Include="Assets\StoreLogo.png" />
     <Image Include="Assets\SplashScreen.png" />
@@ -182,6 +183,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="StarterKit_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <MeshContentTask Include="StarShip.FBX" />
+    <MeshContentTask Include="TheMoon.FBX" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

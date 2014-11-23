@@ -35,6 +35,8 @@ public:
 	void rotateObject(int rotationType);
 private:
     std::vector<VSD3DStarter::Mesh*> m_meshModels;
+	std::vector<VSD3DStarter::Mesh*> m_moonModel;
+	std::vector<VSD3DStarter::Mesh*> m_starShipModel;
 
 	
 };
