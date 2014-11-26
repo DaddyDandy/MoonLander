@@ -16,6 +16,8 @@
 #include "VSD3DStarter.h"
 #include "GameBase.h"
 
+#include "StarShipRotationTypes.h"
+
 ref class Game sealed : public GameBase
 {
 public:
@@ -33,10 +35,17 @@ public:
     Platform::String^ OnHitObject(int x, int y);
 
 	void rotateObject(int rotationType);
+
+	bool AnimationRunning() { return m_isAnimationRunning; }
+	void AnimationRunning(bool val) { m_isAnimationRunning = val; }
 private:
     std::vector<VSD3DStarter::Mesh*> m_meshModels;
 	std::vector<VSD3DStarter::Mesh*> m_moonModel;
 	std::vector<VSD3DStarter::Mesh*> m_starShipModel;
 
-	
+	bool m_isAnimationRunning;	
+	float m_animationTime;
+	DirectX::XMFLOAT3 m_initialRotation;
+	DirectX::XMFLOAT3 m_currentRotation;
+	DirectX::XMFLOAT3 m_targetRotation;
 };

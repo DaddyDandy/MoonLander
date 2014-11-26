@@ -97,6 +97,20 @@ void Game::Initialize()
 
 void Game::Update(float timeTotal, float timeDelta)
 {
+	if (m_isAnimationRunning)
+	{
+		m_animationTime += timeDelta;
+		static const float animationDuration = 0.5f;
+		float animationProgress = std::min<float>(m_animationTime / animationDuration, 1.0f);
+
+		XMVECTOR initial = XMLoadFloat3(&m_initialRotation);
+		XMVECTOR target = XMLoadFloat3(&m_targetRotation);
+		XMVECTOR current = initial + animationProgress * (target - initial);
+
+		XMStoreFloat3(&m_currentRotation, current);
+		if (animationProgress >= 1.0f)
+			m_isAnimationRunning = false;
+	}
 }
 
 void Game::Render()
@@ -122,8 +136,10 @@ void Game::Render()
         0
         );
 
-	XMMATRIX transform = XMMatrixIdentity();	
+	XMMATRIX transform = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_currentRotation));	
 	m_starShipModel[0]->Render(m_graphics, transform);
+
+	transform = XMMatrixIdentity();
 	for (UINT i = 0; i < m_moonModel.size(); i++)
 	{		
 		m_moonModel[i]->Render(m_graphics, transform);
@@ -174,5 +190,26 @@ String^ Game::OnHitObject(int x, int y)
 
 void Game::rotateObject(int rotationType)
 {
-
+	switch (rotationType)
+	{
+	case ROTATE_UP:		
+		m_targetRotation = XMFLOAT3(m_targetRotation.x - 0.2f, m_targetRotation.y, 0.0f);
+		break;
+	case ROTATE_DOWN:
+		m_targetRotation = XMFLOAT3(m_targetRotation.x + 0.2f, m_targetRotation.y, 0.0f);
+		break;
+	case ROTATE_RIGHT:		
+		m_targetRotation = XMFLOAT3(m_targetRotation.x, m_targetRotation.y - 0.2f, 0.0f);
+		break;
+	case ROTATE_LEFT:
+		m_targetRotation = XMFLOAT3(m_targetRotation.x, m_targetRotation.y + 0.2f, 0.0f);
+		break;
+	default:
+		break;
+	}
+	m_initialRotation = m_currentRotation;
+	m_animationTime = 0.0f;
+	m_isAnimationRunning = true;
 }
+
+

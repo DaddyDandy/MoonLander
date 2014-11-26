@@ -38,7 +38,8 @@ namespace StarterKit
         void OnDisplayContentsInvalidated(Platform::Object^ sender);
         void OnRendering(Object^ sender, Object^ args);
         void OnTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
-                
+		void OnKeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
+
         Windows::Foundation::EventRegistrationToken m_eventToken;
 
         Game^ m_renderer;

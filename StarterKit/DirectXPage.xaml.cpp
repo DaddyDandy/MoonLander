@@ -99,4 +99,33 @@ void DirectXPage::LoadInternalState(IPropertySet^ state)
 
 void DirectXPage::OnTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
 {
+	// TODO : some test	
+	if (!m_renderer->AnimationRunning())
+	{
+		m_renderer->rotateObject(0);
+	}		
+}
+
+void DirectXPage::OnKeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
+{
+	if (!m_renderer->AnimationRunning())
+	{
+		switch (e->Key)
+		{
+		case Windows::System::VirtualKey::W:
+			m_renderer->rotateObject(ROTATE_UP);
+			break;
+		case Windows::System::VirtualKey::S:
+			m_renderer->rotateObject(ROTATE_DOWN);
+			break;
+		case Windows::System::VirtualKey::A:
+			m_renderer->rotateObject(ROTATE_LEFT);
+			break;
+		case Windows::System::VirtualKey::D:
+			m_renderer->rotateObject(ROTATE_RIGHT);
+			break;
+		default:
+			break;
+		}
+	}
 }
