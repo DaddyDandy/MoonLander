@@ -48,4 +48,9 @@ private:
 	DirectX::XMFLOAT3 m_initialRotation;
 	DirectX::XMFLOAT3 m_currentRotation;
 	DirectX::XMFLOAT3 m_targetRotation;
+
+	float m_rotationSpeedX;
+	float m_rotationSpeedY;
+
+	float m_translation;
 };
