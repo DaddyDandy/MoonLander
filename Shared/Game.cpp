@@ -22,6 +22,8 @@ using namespace VSD3DStarter;
 
 Game::Game()
 {
+	m_rotationSpeedX = 0.0f;
+	m_rotationSpeedY = 0.0f;
 }
 
 Game::~Game()
@@ -104,11 +106,11 @@ void Game::Update(float timeTotal, float timeDelta)
 		float animationProgress = std::min<float>(m_animationTime / animationDuration, 1.0f);
 
 		XMVECTOR initial = XMLoadFloat3(&m_initialRotation);
-		XMVECTOR target = XMLoadFloat3(&m_targetRotation);
+		XMVECTOR target = XMLoadFloat3(&m_targetRotation);		
 		XMVECTOR current = initial + animationProgress * (target - initial);
 
 		XMStoreFloat3(&m_currentRotation, current);
-		//if (m_rotationSpeedX.Equals(0.0f) && m_rotationSpeedY.Equals(0.0f))			
+		//if (m_rotationSpeedX.Equals(0.0f) && m_rotationSpeedY.Equals(0.0f))	
 		if (animationProgress >= 1.0f)
 		{
 			m_isAnimationRunning = false;
@@ -197,23 +199,22 @@ void Game::rotateObject(int rotationType)
 	{
 	case ROTATE_UP:		
 		m_rotationSpeedX -= 0.2f;
-		m_targetRotation = XMFLOAT3(m_targetRotation.x + m_rotationSpeedX, m_targetRotation.y, 0.0f);
 		break;
 	case ROTATE_DOWN:
 		m_rotationSpeedX += 0.2f;
-		m_targetRotation = XMFLOAT3(m_targetRotation.x + m_rotationSpeedX, m_targetRotation.y, 0.0f);
 		break;
 	case ROTATE_RIGHT:		
 		m_rotationSpeedY -= 0.2f;
-		m_targetRotation = XMFLOAT3(m_targetRotation.x, m_targetRotation.y + m_rotationSpeedY, 0.0f);
 		break;
 	case ROTATE_LEFT:
-		m_rotationSpeedY += 0.2f;
-		m_targetRotation = XMFLOAT3(m_targetRotation.x, m_targetRotation.y + m_rotationSpeedY, 0.0f);
+		m_rotationSpeedY += 0.2f;		
 		break;
-	default:
+	default:		
 		break;
 	}
+
+	m_targetRotation = XMFLOAT3(m_targetRotation.x + m_rotationSpeedX, m_targetRotation.y + m_rotationSpeedY, 0.0f);
+
 	m_initialRotation = m_currentRotation;
 	m_animationTime = 0.0f;
 	m_isAnimationRunning = true;
