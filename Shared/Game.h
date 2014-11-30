@@ -16,7 +16,7 @@
 #include "VSD3DStarter.h"
 #include "GameBase.h"
 
-#include "StarShipRotationTypes.h"
+#include "StarShipMoovementTypes.h"
 
 ref class Game sealed : public GameBase
 {
@@ -34,7 +34,8 @@ public:
     
     Platform::String^ OnHitObject(int x, int y);
 
-	void rotateObject(int rotationType);
+	void RotateObject(int rotationType);
+	void MooveObject(int mooveType);
 
 	bool AnimationRunning() { return m_isAnimationRunning; }
 	void AnimationRunning(bool val) { m_isAnimationRunning = val; }
@@ -50,7 +51,13 @@ private:
 	DirectX::XMFLOAT3 m_targetRotation;
 
 	float m_rotationSpeedX;
+	float m_rotationSpeedXOld;
 	float m_rotationSpeedY;
+	float m_rotationSpeedYOld;
+
+	float m_moovementSpeed;
 
 	float m_translation;
+	float m_rotationY;
+	float m_rotationX;
 };

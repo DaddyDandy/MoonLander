@@ -1,0 +1,10 @@
+enum StarShipMoovementTypes
+{
+	ROTATE_UP = 0,
+	ROTATE_DOWN = 1,
+	ROTATE_RIGHT = 2,
+	ROTATE_LEFT = 3,
+
+	MOOVE_FORWARD = 0,
+	MOOVE_BACKWARD = 1
+};

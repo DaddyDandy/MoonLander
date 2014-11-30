@@ -99,32 +99,39 @@ void DirectXPage::LoadInternalState(IPropertySet^ state)
 
 void DirectXPage::OnTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
 {
-	// TODO : some test	
-	if (!m_renderer->AnimationRunning())
+	switch (e->PointerDeviceType)
 	{
-		m_renderer->rotateObject(0);
-	}		
+	case Windows::Devices::Input::PointerDeviceType::Mouse:
+		break;
+	}
 }
 
 void DirectXPage::OnKeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
 {
-	if (!m_renderer->AnimationRunning())
+	//if (!m_renderer->AnimationRunning())
 	{
 		switch (e->Key)
 		{
 		case Windows::System::VirtualKey::W:
-			m_renderer->rotateObject(ROTATE_UP);
+			m_renderer->RotateObject(ROTATE_UP);
 			break;
 		case Windows::System::VirtualKey::S:
-			m_renderer->rotateObject(ROTATE_DOWN);
+			m_renderer->RotateObject(ROTATE_DOWN);
 			break;
 		case Windows::System::VirtualKey::A:
-			m_renderer->rotateObject(ROTATE_LEFT);
+			m_renderer->RotateObject(ROTATE_LEFT);
 			break;
 		case Windows::System::VirtualKey::D:
-			m_renderer->rotateObject(ROTATE_RIGHT);
+			m_renderer->RotateObject(ROTATE_RIGHT);
 			break;
-		default:
+		case Windows::System::VirtualKey::Space:
+			m_renderer->MooveObject(MOOVE_FORWARD);
+			break;
+		case Windows::System::VirtualKey::Shift:
+			m_renderer->MooveObject(MOOVE_BACKWARD);
+			break;
+		case Windows::System::VirtualKey::Escape:
+			// pause/menu
 			break;
 		}
 	}

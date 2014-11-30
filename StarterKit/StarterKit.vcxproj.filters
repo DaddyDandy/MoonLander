@@ -65,7 +65,10 @@
     <ClInclude Include="..\Shared\DDSTextureLoader.h">
       <Filter>Shared</Filter>
     </ClInclude>
-    <ClInclude Include="StarShipRotationTypes.h">
+    <ClInclude Include="StarShipMoovementTypes.h">
+      <Filter>Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicVariables.h">
       <Filter>Enums</Filter>
     </ClInclude>
   </ItemGroup>

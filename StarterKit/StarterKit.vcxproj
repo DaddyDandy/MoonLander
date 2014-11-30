@@ -137,7 +137,8 @@
       <DependentUpon>DirectXPage.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="..\Shared\VSD3DStarter.h" />
-    <ClInclude Include="StarShipRotationTypes.h" />
+    <ClInclude Include="PhysicVariables.h" />
+    <ClInclude Include="StarShipMoovementTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
