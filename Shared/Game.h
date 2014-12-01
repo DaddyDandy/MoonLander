@@ -36,6 +36,7 @@ public:
 
 	void RotateObject(int rotationType);
 	void MooveObject(int mooveType);
+	void UpdateObjectTarget();
 
 	bool AnimationRunning() { return m_isAnimationRunning; }
 	void AnimationRunning(bool val) { m_isAnimationRunning = val; }

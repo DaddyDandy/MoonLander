@@ -20,7 +20,7 @@ using namespace Windows::Graphics::Display;
 using namespace Windows::UI::Core;
 using namespace VSD3DStarter;
 
-const float m_rotationPower = 0.1f;
+const float m_rotationPower = 0.05f;
 const float m_moovePower = 0.2f;
 
 Game::Game()
@@ -102,10 +102,12 @@ void Game::Initialize()
 
 void Game::Update(float timeTotal, float timeDelta)
 {
+	/*m_rotationX = timeTotal * m_rotationSpeedX;
+	m_rotationY = timeTotal * m_rotationSpeedY;*/
 	if (m_isAnimationRunning)
 	{
 		m_animationTime += timeDelta;
-		static const float animationDuration = 0.5f;
+		static const float animationDuration = 1.0f;
 		float animationProgress = std::min<float>(m_animationTime / animationDuration, 1.0f);
 
 		XMVECTOR initial = XMLoadFloat3(&m_initialRotation);
@@ -144,6 +146,8 @@ void Game::Render()
 		);
 
 	XMMATRIX transform = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_currentRotation));	
+	/*transform = XMMatrixRotationX(m_rotationX);
+	transform *= XMMatrixRotationY(m_rotationY);*/
 	m_starShipModel[0]->Render(m_graphics, transform);
 
 	transform = XMMatrixIdentity();
@@ -159,6 +163,8 @@ void Game::Render()
 		UINT resourceIndex = D3D11CalcSubresource(0, 0, 1);
 		m_d3dContext->ResolveSubresource(m_backBuffer.Get(), resourceIndex, m_backBufferMsaa.Get(), resourceIndex, DXGI_FORMAT_B8G8R8A8_UNORM);
 	}
+
+	UpdateObjectTarget();
 }
 
 String^ Game::OnHitObject(int x, int y)
@@ -209,12 +215,10 @@ void Game::RotateObject(int rotationType)
 		break;
 	}
 
-	m_targetRotation = XMFLOAT3(m_targetRotation.x + m_rotationSpeedX, m_targetRotation.y + m_rotationSpeedY, 0.0f);
-
-	m_initialRotation = m_currentRotation;
-	m_animationTime = 0.0f;
-	m_isAnimationRunning = true;
+	UpdateObjectTarget();
 }
+
+
 
 void Game::MooveObject(int mooveType)
 {
@@ -227,6 +231,15 @@ void Game::MooveObject(int mooveType)
 		m_moovementSpeed -= m_moovePower;
 		break;
 	}
+}
+
+void Game::UpdateObjectTarget()
+{
+	m_targetRotation = XMFLOAT3(m_targetRotation.x + m_rotationSpeedX, m_targetRotation.y + m_rotationSpeedY, 0.0f);
+
+	m_initialRotation = m_currentRotation;
+	m_animationTime = 0.0f;
+	m_isAnimationRunning = true;
 }
 
 
