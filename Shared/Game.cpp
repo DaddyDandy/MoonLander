@@ -20,13 +20,14 @@ using namespace Windows::Graphics::Display;
 using namespace Windows::UI::Core;
 using namespace VSD3DStarter;
 
-const float m_rotationPower = 0.05f;
-const float m_moovePower = 0.2f;
+const float m_rotationPower = 0.01f;
+const float m_moovePower = 0.5f;
 
 Game::Game()
 {
 	m_rotationSpeedX = 0.0f;
 	m_rotationSpeedY = 0.0f;
+	m_moovementSpeed = 0.0f;
 }
 
 Game::~Game()
@@ -44,9 +45,7 @@ void Game::CreateWindowSizeDependentResources()
 
 	float aspectRatio = m_windowBounds.Width / m_windowBounds.Height;
 
-	//
 	// setup camera for our scene
-	//
 	m_graphics.GetCamera().SetViewport((UINT)m_windowBounds.Width, (UINT)m_windowBounds.Height);
 	m_graphics.GetCamera().SetPosition(XMFLOAT3(0.0f, 12.0f, -22.0f));
 	m_graphics.GetCamera().SetLookAt(XMFLOAT3(0.0f, 0.0f, 0.0f));
@@ -55,26 +54,20 @@ void Game::CreateWindowSizeDependentResources()
 
 	if (aspectRatio < 1.0f)
 	{
-		///
 		/// portrait or snap view
-		///
 		m_graphics.GetCamera().SetUpVector(XMFLOAT3(1.0f, 0.0f, 0.0f));
 		fovAngleY = 120.0f * XM_PI / 180.0f;
 
 	}
 	else
 	{
-		///
 		/// landscape view
-		///
 		m_graphics.GetCamera().SetUpVector(XMFLOAT3(0.0f, 1.0f, 0.0f));
 	}
 
 	m_graphics.GetCamera().SetProjection(fovAngleY, aspectRatio, 1.0f, 1000.0f);
 
-	//
 	// setup lighting for our scene
-	//
 	XMFLOAT3 pos = XMFLOAT3(5.0f, 5.0f, -2.5f);
 	XMVECTOR vPos = XMLoadFloat3(&pos);
 
@@ -102,22 +95,15 @@ void Game::Initialize()
 
 void Game::Update(float timeTotal, float timeDelta)
 {
-	if (m_isAnimationRunning)
-	{
-		m_animationTime += timeDelta;
-		static const float animationDuration = 1.0f;
-		float animationProgress = std::min<float>(m_animationTime / animationDuration, 1.0f);
+	m_animationTime += timeDelta;
+	static const float animationDuration = 0.2f;
+	float rotateAnimationProgress = std::min<float>(m_animationTime / animationDuration, 0.4f);
 
-		XMVECTOR initial = XMLoadFloat3(&m_initialRotation);
-		XMVECTOR target = XMLoadFloat3(&m_targetRotation);
-		XMVECTOR current = initial + animationProgress * (target - initial);
+	XMVECTOR initial = XMLoadFloat3(&m_initialRotation);
+	XMVECTOR target = XMLoadFloat3(&m_targetRotation);
+	XMVECTOR current = initial + rotateAnimationProgress * (target - initial);
 
-		XMStoreFloat3(&m_currentRotation, current);
-		if (animationProgress >= 1.0f)
-		{
-			m_isAnimationRunning = false;
-		}
-	}
+	XMStoreFloat3(&m_currentRotation, current);
 }
 
 void Game::Render()
@@ -143,9 +129,8 @@ void Game::Render()
 		0
 		);
 
-	XMMATRIX transform = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_currentRotation));	
-	/*transform = XMMatrixRotationX(m_rotationX);
-	transform *= XMMatrixRotationY(m_rotationY);*/
+	XMMATRIX transform = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_currentRotation));
+	transform *= XMMatrixTranslation(0, 0, m_moovementSpeed);
 	m_starShipModel[0]->Render(m_graphics, transform);
 
 	transform = XMMatrixIdentity();
@@ -199,7 +184,7 @@ void Game::RotateObject(int rotationType)
 {
 	switch (rotationType)
 	{
-	case ROTATE_UP:		
+	case ROTATE_UP:
 		m_rotationSpeedX -= m_rotationPower;
 		break;
 	case ROTATE_DOWN:
@@ -223,10 +208,10 @@ void Game::MooveObject(int mooveType)
 	switch (mooveType)
 	{
 	case MOOVE_FORWARD:
-		m_moovementSpeed += m_moovePower;
+
 		break;
 	case MOOVE_BACKWARD:
-		m_moovementSpeed -= m_moovePower;
+
 		break;
 	}
 }

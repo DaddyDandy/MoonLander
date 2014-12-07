@@ -47,18 +47,17 @@ private:
 
 	bool m_isAnimationRunning;	
 	float m_animationTime;
+
 	DirectX::XMFLOAT3 m_initialRotation;
 	DirectX::XMFLOAT3 m_currentRotation;
 	DirectX::XMFLOAT3 m_targetRotation;
 
+	DirectX::XMFLOAT3 m_initialMoove;
+	DirectX::XMFLOAT3 m_currentMoove;
+	DirectX::XMFLOAT3 m_tergetMoove;
+
 	float m_rotationSpeedX;
-	float m_rotationSpeedXOld;
 	float m_rotationSpeedY;
-	float m_rotationSpeedYOld;
 
 	float m_moovementSpeed;
-
-	float m_translation;
-	float m_rotationY;
-	float m_rotationX;
 };
