@@ -102,8 +102,6 @@ void Game::Initialize()
 
 void Game::Update(float timeTotal, float timeDelta)
 {
-	/*m_rotationX = timeTotal * m_rotationSpeedX;
-	m_rotationY = timeTotal * m_rotationSpeedY;*/
 	if (m_isAnimationRunning)
 	{
 		m_animationTime += timeDelta;
