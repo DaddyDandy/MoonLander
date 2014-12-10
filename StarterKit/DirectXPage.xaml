@@ -11,6 +11,10 @@
     <SwapChainBackgroundPanel x:Name="SwapChainPanel" 
                               Tapped="OnTapped" 
                               KeyDown="OnKeyDown">
+        <GridView HorizontalAlignment="Center" VerticalAlignment="Center" Name="MenuButtons">
+            <Button Content="New Game" Width="300" Height="75" Click="New_Game_Click"/>
+            <Button Content="Exit" Width="300" Height="75" Click="Exit_Click"/>
+        </GridView>        
     </SwapChainBackgroundPanel>
 
 </Page>

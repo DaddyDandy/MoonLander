@@ -131,8 +131,19 @@ void DirectXPage::OnKeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::
 			m_renderer->MooveObject(MOOVE_BACKWARD);
 			break;
 		case Windows::System::VirtualKey::Escape:
-			// pause/menu
+			this->MenuButtons->Visibility = Windows::UI::Xaml::Visibility::Visible;			
 			break;
 		}
 	}
+}
+
+void StarterKit::DirectXPage::New_Game_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	this->MenuButtons->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+
+void StarterKit::DirectXPage::Exit_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	this->MenuButtons->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }

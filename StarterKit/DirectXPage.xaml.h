@@ -45,5 +45,8 @@ namespace StarterKit
         Game^ m_renderer;
                 
         BasicTimer^ m_timer;
-    };
+		void Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void New_Game_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void Exit_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+	};
 }
