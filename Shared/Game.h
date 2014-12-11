@@ -38,14 +38,22 @@ public:
 	void MooveObject(int mooveType);
 	void UpdateObjectTarget();
 
-	bool AnimationRunning() { return m_isAnimationRunning; }
-	void AnimationRunning(bool val) { m_isAnimationRunning = val; }
+	/*bool AnimationRunning() { return m_isAnimationRunning; }
+	void AnimationRunning(bool val) { m_isAnimationRunning = val; }*/
 private:
     std::vector<VSD3DStarter::Mesh*> m_meshModels;
 	std::vector<VSD3DStarter::Mesh*> m_moonModel;
 	std::vector<VSD3DStarter::Mesh*> m_starShipModel;
 
-	bool m_isAnimationRunning;	
+	float m_rotationX;
+	float m_rotationY;
+	float m_rotationZ;
+
+	float m_translationX;
+	float m_translationY;
+	float m_translationZ;
+
+	/*bool m_isAnimationRunning;	
 	float m_animationTime;
 
 	DirectX::XMFLOAT3 m_initialRotation;
@@ -58,6 +66,7 @@ private:
 
 	float m_rotationSpeedX;
 	float m_rotationSpeedY;
+	float m_rotationSpeedZ;
 
-	float m_moovementSpeed;
+	float m_moovementSpeed;*/
 };

@@ -25,9 +25,10 @@ const float m_moovePower = 0.5f;
 
 Game::Game()
 {
-	m_rotationSpeedX = 0.0f;
+	/*m_rotationSpeedX = 0.0f;
 	m_rotationSpeedY = 0.0f;
-	m_moovementSpeed = 0.0f;
+	m_rotationSpeedZ = 0.0f;
+	m_moovementSpeed = 0.0f;*/
 }
 
 Game::~Game()
@@ -95,7 +96,19 @@ void Game::Initialize()
 
 void Game::Update(float timeTotal, float timeDelta)
 {
-	m_animationTime += timeDelta;
+	m_rotationY = timeTotal * 0.5f;
+	m_rotationX = timeTotal * 0.5f;
+	m_rotationZ = timeTotal * 0.5f;
+
+	const float maxHeight = 7.0f;
+	auto totalTime = (float)fmod(timeTotal, 2.0f);
+	m_translationY = totalTime > 1.0f ?
+		maxHeight - (maxHeight * (totalTime - 1.0f)) : maxHeight * totalTime;
+	m_translationX = totalTime > 1.0f ?
+		maxHeight - (maxHeight * (totalTime - 1.0f)) : maxHeight * totalTime;
+	m_translationZ = totalTime > 1.0f ?
+		maxHeight - (maxHeight * (totalTime - 1.0f)) : maxHeight * totalTime;
+	/*m_animationTime += timeDelta;
 	static const float animationDuration = 0.2f;
 	float rotateAnimationProgress = std::min<float>(m_animationTime / animationDuration, 0.4f);
 
@@ -103,7 +116,7 @@ void Game::Update(float timeTotal, float timeDelta)
 	XMVECTOR target = XMLoadFloat3(&m_targetRotation);
 	XMVECTOR current = initial + rotateAnimationProgress * (target - initial);
 
-	XMStoreFloat3(&m_currentRotation, current);
+	XMStoreFloat3(&m_currentRotation, current);*/
 }
 
 void Game::Render()
@@ -129,14 +142,22 @@ void Game::Render()
 		0
 		);
 
-	XMMATRIX transform = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_currentRotation));
-	transform *= XMMatrixTranslation(0, 0, m_moovementSpeed);
+	/*XMMATRIX transform = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_currentRotation));	
+	transform *= XMMatrixTranslation(0, 0, 0);	
+	m_starShipModel[0]->Render(m_graphics, transform);
+	transform = XMMatrixIdentity();*/
+
+	XMMATRIX transform = XMMatrixRotationY(m_rotationY);
+	transform *= XMMatrixRotationX(m_rotationX);
+	transform *= XMMatrixRotationZ(m_rotationZ);
+	transform *= XMMatrixTranslation(m_translationX, m_translationY, m_translationZ);
 	m_starShipModel[0]->Render(m_graphics, transform);
 
 	transform = XMMatrixIdentity();
 	for (UINT i = 0; i < m_moonModel.size(); i++)
 	{
 		m_moonModel[i]->Render(m_graphics, transform);
+		//m_moonModel[i]->Render(m_graphics, transform);
 	}
 
 	// only enable MSAA if the device has enough power
@@ -182,7 +203,7 @@ String^ Game::OnHitObject(int x, int y)
 
 void Game::RotateObject(int rotationType)
 {
-	switch (rotationType)
+	/*switch (rotationType)
 	{
 	case ROTATE_UP:
 		m_rotationSpeedX -= m_rotationPower;
@@ -198,7 +219,7 @@ void Game::RotateObject(int rotationType)
 		break;
 	}
 
-	UpdateObjectTarget();
+	UpdateObjectTarget();*/
 }
 
 
@@ -218,11 +239,12 @@ void Game::MooveObject(int mooveType)
 
 void Game::UpdateObjectTarget()
 {
-	m_targetRotation = XMFLOAT3(m_targetRotation.x + m_rotationSpeedX, m_targetRotation.y + m_rotationSpeedY, 0.0f);
+	//m_targetRotation = XMFLOAT3(m_targetRotation.x + m_rotationSpeedX, m_targetRotation.y + m_rotationSpeedY, m_rotationSpeedZ);
+	////m_targetRotation = XMFLOAT3(0.0f, 2.5f, (-0.0f + 2.5f) / 2);
 
-	m_initialRotation = m_currentRotation;
-	m_animationTime = 0.0f;
-	m_isAnimationRunning = true;
+	//m_initialRotation = m_currentRotation;
+	//m_animationTime = 0.0f;
+	//m_isAnimationRunning = true;
 }
 
 
