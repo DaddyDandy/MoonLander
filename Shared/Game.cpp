@@ -20,15 +20,17 @@ using namespace Windows::Graphics::Display;
 using namespace Windows::UI::Core;
 using namespace VSD3DStarter;
 
-const float m_rotationPower = 0.01f;
-const float m_moovePower = 0.5f;
+const float ROTATION_POWER = 0.01f;
+const float MOOVE_POWER = 0.01f;
+static const float ANIMATION_DURATION = 0.2f;
+const float MOON_GA = 1.6f;
 
 Game::Game()
 {
-	/*m_rotationSpeedX = 0.0f;
+	m_rotationSpeedX = 0.0f;
 	m_rotationSpeedY = 0.0f;
 	m_rotationSpeedZ = 0.0f;
-	m_moovementSpeed = 0.0f;*/
+	m_translationSpeed = 0.0f;
 }
 
 Game::~Game()
@@ -94,35 +96,8 @@ void Game::Initialize()
 	Mesh::LoadFromFile(m_graphics, L"TheMoon.cmo", L"", L"", m_moonModel);
 }
 
-void Game::Update(float timeTotal, float timeDelta)
+void Game::Clear()
 {
-	m_rotationY = timeTotal * 0.5f;
-	m_rotationX = timeTotal * 0.5f;
-	m_rotationZ = timeTotal * 0.5f;
-
-	const float maxHeight = 7.0f;
-	auto totalTime = (float)fmod(timeTotal, 2.0f);
-	m_translationY = totalTime > 1.0f ?
-		maxHeight - (maxHeight * (totalTime - 1.0f)) : maxHeight * totalTime;
-	m_translationX = totalTime > 1.0f ?
-		maxHeight - (maxHeight * (totalTime - 1.0f)) : maxHeight * totalTime;
-	m_translationZ = totalTime > 1.0f ?
-		maxHeight - (maxHeight * (totalTime - 1.0f)) : maxHeight * totalTime;
-	/*m_animationTime += timeDelta;
-	static const float animationDuration = 0.2f;
-	float rotateAnimationProgress = std::min<float>(m_animationTime / animationDuration, 0.4f);
-
-	XMVECTOR initial = XMLoadFloat3(&m_initialRotation);
-	XMVECTOR target = XMLoadFloat3(&m_targetRotation);
-	XMVECTOR current = initial + rotateAnimationProgress * (target - initial);
-
-	XMStoreFloat3(&m_currentRotation, current);*/
-}
-
-void Game::Render()
-{
-	GameBase::Render();
-
 	// clear
 	m_d3dContext->OMSetRenderTargets(
 		1,
@@ -141,34 +116,6 @@ void Game::Render()
 		1.0f,
 		0
 		);
-
-	/*XMMATRIX transform = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_currentRotation));	
-	transform *= XMMatrixTranslation(0, 0, 0);	
-	m_starShipModel[0]->Render(m_graphics, transform);
-	transform = XMMatrixIdentity();*/
-
-	XMMATRIX transform = XMMatrixRotationY(m_rotationY);
-	transform *= XMMatrixRotationX(m_rotationX);
-	transform *= XMMatrixRotationZ(m_rotationZ);
-	transform *= XMMatrixTranslation(m_translationX, m_translationY, m_translationZ);
-	m_starShipModel[0]->Render(m_graphics, transform);
-
-	transform = XMMatrixIdentity();
-	for (UINT i = 0; i < m_moonModel.size(); i++)
-	{
-		m_moonModel[i]->Render(m_graphics, transform);
-		//m_moonModel[i]->Render(m_graphics, transform);
-	}
-
-	// only enable MSAA if the device has enough power
-	if (m_d3dFeatureLevel >= D3D_FEATURE_LEVEL_10_0)
-	{
-		// resolve multi-sample textures into single-sample textures
-		UINT resourceIndex = D3D11CalcSubresource(0, 0, 1);
-		m_d3dContext->ResolveSubresource(m_backBuffer.Get(), resourceIndex, m_backBufferMsaa.Get(), resourceIndex, DXGI_FORMAT_B8G8R8A8_UNORM);
-	}
-
-	UpdateObjectTarget();
 }
 
 String^ Game::OnHitObject(int x, int y)
@@ -201,25 +148,69 @@ String^ Game::OnHitObject(int x, int y)
 	return result;
 }
 
+void Game::Update(float timeTotal, float timeDelta)
+{
+	m_animationTime += timeDelta;
+	float rotateAnimationProgress = std::min<float>(m_animationTime / ANIMATION_DURATION, 0.4f);
+
+	XMVECTOR initial = XMLoadFloat3(&m_initialRotation);
+	XMVECTOR target = XMLoadFloat3(&m_targetRotation);
+	XMVECTOR current = initial + rotateAnimationProgress * (target - initial);
+	XMStoreFloat3(&m_currentRotation, current);
+	
+	float initialT = m_initialTranslation;
+	float targetT = m_targetTranslation;
+	float currentT = initialT + rotateAnimationProgress * (targetT - initialT);
+	m_currentTranslation = currentT;	
+
+	float fallAnimationProgress = std::min<float>(m_animationTime / ANIMATION_DURATION, 1.0f);
+	m_gravitationTranslation = -1.0f * (timeTotal * MOON_GA);		
+}
+
+void Game::Render()
+{
+	GameBase::Render();
+	Clear();
+
+	XMMATRIX transform = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_currentRotation));
+	transform *= XMMatrixTranslation(0.0f, m_gravitationTranslation, m_currentTranslation);
+	m_starShipModel[0]->Render(m_graphics, transform);
+	transform = XMMatrixIdentity();
+	for (UINT i = 0; i < m_moonModel.size(); i++)
+	{
+		m_moonModel[i]->Render(m_graphics, transform);
+	}
+
+	// only enable MSAA if the device has enough power
+	if (m_d3dFeatureLevel >= D3D_FEATURE_LEVEL_10_0)
+	{
+		// resolve multi-sample textures into single-sample textures
+		UINT resourceIndex = D3D11CalcSubresource(0, 0, 1);
+		m_d3dContext->ResolveSubresource(m_backBuffer.Get(), resourceIndex, m_backBufferMsaa.Get(), resourceIndex, DXGI_FORMAT_B8G8R8A8_UNORM);
+	}
+
+	UpdateObjectTarget();
+}
+
 void Game::RotateObject(int rotationType)
 {
-	/*switch (rotationType)
+	switch (rotationType)
 	{
 	case ROTATE_UP:
-		m_rotationSpeedX -= m_rotationPower;
+		m_rotationSpeedX -= ROTATION_POWER;
 		break;
 	case ROTATE_DOWN:
-		m_rotationSpeedX += m_rotationPower;
+		m_rotationSpeedX += ROTATION_POWER;
 		break;
 	case ROTATE_RIGHT:
-		m_rotationSpeedY -= m_rotationPower;
+		m_rotationSpeedY -= ROTATION_POWER;
 		break;
 	case ROTATE_LEFT:
-		m_rotationSpeedY += m_rotationPower;
+		m_rotationSpeedY += ROTATION_POWER;
 		break;
 	}
 
-	UpdateObjectTarget();*/
+	UpdateObjectTarget();
 }
 
 
@@ -229,22 +220,25 @@ void Game::MooveObject(int mooveType)
 	switch (mooveType)
 	{
 	case MOOVE_FORWARD:
-
+		m_translationSpeed += MOOVE_POWER;
 		break;
 	case MOOVE_BACKWARD:
-
+		m_translationSpeed -= MOOVE_POWER;
 		break;
 	}
+
+	//m_targetTranslation += m_translationSpeed;
+	UpdateObjectTarget();
 }
 
 void Game::UpdateObjectTarget()
 {
-	//m_targetRotation = XMFLOAT3(m_targetRotation.x + m_rotationSpeedX, m_targetRotation.y + m_rotationSpeedY, m_rotationSpeedZ);
-	////m_targetRotation = XMFLOAT3(0.0f, 2.5f, (-0.0f + 2.5f) / 2);
+	m_targetRotation = XMFLOAT3(m_targetRotation.x + m_rotationSpeedX, m_targetRotation.y + m_rotationSpeedY, m_targetRotation.z + m_rotationSpeedZ);
+	m_initialRotation = m_currentRotation;
+	
+	m_targetTranslation += m_translationSpeed;
+	m_initialTranslation = m_currentTranslation;
 
-	//m_initialRotation = m_currentRotation;
-	//m_animationTime = 0.0f;
-	//m_isAnimationRunning = true;
+	m_animationTime = 0.0f;
+	m_isAnimationRunning = true;
 }
-
-

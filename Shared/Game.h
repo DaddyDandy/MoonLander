@@ -17,6 +17,7 @@
 #include "GameBase.h"
 
 #include "StarShipMoovementTypes.h"
+#include "PhysicVariables.h"
 
 ref class Game sealed : public GameBase
 {
@@ -31,6 +32,7 @@ public:
     virtual void Initialize() override;
     virtual void Update(float timeTotal, float timeDelta) override;
     virtual void Render() override;
+	virtual void Clear();
     
     Platform::String^ OnHitObject(int x, int y);
 
@@ -45,28 +47,23 @@ private:
 	std::vector<VSD3DStarter::Mesh*> m_moonModel;
 	std::vector<VSD3DStarter::Mesh*> m_starShipModel;
 
-	float m_rotationX;
-	float m_rotationY;
-	float m_rotationZ;
-
-	float m_translationX;
-	float m_translationY;
-	float m_translationZ;
-
-	/*bool m_isAnimationRunning;	
+	bool m_isAnimationRunning;	
 	float m_animationTime;
 
 	DirectX::XMFLOAT3 m_initialRotation;
 	DirectX::XMFLOAT3 m_currentRotation;
 	DirectX::XMFLOAT3 m_targetRotation;
 
-	DirectX::XMFLOAT3 m_initialMoove;
-	DirectX::XMFLOAT3 m_currentMoove;
-	DirectX::XMFLOAT3 m_tergetMoove;
+	float m_initialTranslation;
+	float m_currentTranslation;
+	float m_targetTranslation;
+	float m_gravitationTranslation;
+
+	float m_gravitationTime;
 
 	float m_rotationSpeedX;
 	float m_rotationSpeedY;
 	float m_rotationSpeedZ;
 
-	float m_moovementSpeed;*/
+	float m_translationSpeed;
 };
