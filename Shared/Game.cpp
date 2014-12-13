@@ -150,21 +150,24 @@ String^ Game::OnHitObject(int x, int y)
 
 void Game::Update(float timeTotal, float timeDelta)
 {
-	m_animationTime += timeDelta;
-	float rotateAnimationProgress = std::min<float>(m_animationTime / ANIMATION_DURATION, 0.4f);
+	if (true) // !pause
+	{
+		m_animationTime += timeDelta;
+		float rotateAnimationProgress = std::min<float>(m_animationTime / ANIMATION_DURATION, 0.4f);
 
-	XMVECTOR initial = XMLoadFloat3(&m_initialRotation);
-	XMVECTOR target = XMLoadFloat3(&m_targetRotation);
-	XMVECTOR current = initial + rotateAnimationProgress * (target - initial);
-	XMStoreFloat3(&m_currentRotation, current);
-	
-	float initialT = m_initialTranslation;
-	float targetT = m_targetTranslation;
-	float currentT = initialT + rotateAnimationProgress * (targetT - initialT);
-	m_currentTranslation = currentT;	
+		XMVECTOR initial = XMLoadFloat3(&m_initialRotation);
+		XMVECTOR target = XMLoadFloat3(&m_targetRotation);
+		XMVECTOR current = initial + rotateAnimationProgress * (target - initial);
+		XMStoreFloat3(&m_currentRotation, current);
 
-	float fallAnimationProgress = std::min<float>(m_animationTime / ANIMATION_DURATION, 1.0f);
-	m_gravitationTranslation = -1.0f * (timeTotal * MOON_GA);		
+		float initialT = m_initialTranslation;
+		float targetT = m_targetTranslation;
+		float currentT = initialT + rotateAnimationProgress * (targetT - initialT);
+		m_currentTranslation = currentT;
+
+		float fallAnimationProgress = std::min<float>(m_animationTime / ANIMATION_DURATION, 1.0f);
+		m_gravitationTranslation = -1.0f * (timeTotal * MOON_GA);
+	}
 }
 
 void Game::Render()

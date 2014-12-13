@@ -22,33 +22,44 @@
 ref class Game sealed : public GameBase
 {
 public:
-    Game();
+	Game();
 
 private:
-    ~Game();
+	~Game();
 
 public:
-    virtual void CreateWindowSizeDependentResources() override;
-    virtual void Initialize() override;
-    virtual void Update(float timeTotal, float timeDelta) override;
-    virtual void Render() override;
+	virtual void CreateWindowSizeDependentResources() override;
+	virtual void Initialize() override;
+	virtual void Update(float timeTotal, float timeDelta) override;
+	virtual void Render() override;
 	virtual void Clear();
-    
-    Platform::String^ OnHitObject(int x, int y);
+
+	Platform::String^ OnHitObject(int x, int y);
 
 	void RotateObject(int rotationType);
 	void MooveObject(int mooveType);
 	void UpdateObjectTarget();
 
+	bool Pause() const { return m_isPause; }
+	void Pause(bool val) { m_isPause = val; }
+	bool Multiplayer() const { return m_isMultiplayer; }
+	void Multiplayer(bool val) { m_isMultiplayer = val; }
+	bool GameStarted() const { return m_isGameStarted; }
+	void GameStarted(bool val) { m_isGameStarted = val; }
+
 	/*bool AnimationRunning() { return m_isAnimationRunning; }
 	void AnimationRunning(bool val) { m_isAnimationRunning = val; }*/
 private:
-    std::vector<VSD3DStarter::Mesh*> m_meshModels;
+	std::vector<VSD3DStarter::Mesh*> m_meshModels;
 	std::vector<VSD3DStarter::Mesh*> m_moonModel;
 	std::vector<VSD3DStarter::Mesh*> m_starShipModel;
 
-	bool m_isAnimationRunning;	
-	float m_animationTime;
+	bool m_isGameStarted = false;
+	bool m_isPause = false;
+	bool m_isMultiplayer = false;
+
+	bool m_isAnimationRunning = false;
+	float m_animationTime = 0.0f;
 
 	DirectX::XMFLOAT3 m_initialRotation;
 	DirectX::XMFLOAT3 m_currentRotation;
