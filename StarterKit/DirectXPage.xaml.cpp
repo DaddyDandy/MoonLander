@@ -13,7 +13,7 @@
 #include "pch.h"
 #include "DirectXPage.xaml.h"
 
-using namespace StarterKit;
+using namespace MoonLander;
 
 using namespace Platform;
 using namespace Windows::Foundation;
@@ -145,7 +145,7 @@ void DirectXPage::OnKeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::
 	}
 }
 
-void StarterKit::DirectXPage::New_Game_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void MoonLander::DirectXPage::New_Game_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	this->MenuButtons->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 	m_renderer->GameStarted(true);
@@ -153,7 +153,7 @@ void StarterKit::DirectXPage::New_Game_Click(Platform::Object^ sender, Windows::
 }
 
 
-void StarterKit::DirectXPage::Exit_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void MoonLander::DirectXPage::Exit_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	this->MenuButtons->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 	m_renderer->GameStarted(false);

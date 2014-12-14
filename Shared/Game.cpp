@@ -173,7 +173,7 @@ void Game::Update(float timeTotal, float timeDelta)
 		float currentT = initialT + rotateAnimationProgress * (targetT - initialT);
 		m_currentTranslation = currentT;
 
-		float fallAnimationProgress = std::min<float>(m_animationTime / ANIMATION_DURATION, 1.0f);
+		//float fallAnimationProgress = std::min<float>(m_animationTime / ANIMATION_DURATION, 1.0f);
 		//m_gravitationTranslation = -1.0f * (timeTotal * MOON_GA);
 	}
 }
@@ -196,7 +196,7 @@ void Game::Render()
 	}
 
 	// render Moon
-	transform = XMMatrixTranslation(0.0f, -30.0f, 0.0f);
+	transform = XMMatrixTranslation(0.0f, -100.0f, 0.0f);
 	for (UINT i = 0; i < m_moonModel.size(); i++)
 	{
 		m_moonModel[i]->Render(m_graphics, transform);
@@ -223,18 +223,30 @@ void Game::RotateObject(int rotationType)
 		switch (rotationType)
 		{
 		case ROTATE_UP:
-			m_rotationSpeedX -= ROTATION_POWER;
+			m_rotationSpeedX += ROTATION_POWER;			
+			if (m_targetRotation.z != 0.0f)
+			{
+				m_rotationSpeedX -= ROTATION_POWER;
+				m_rotationSpeedY += (ROTATION_POWER * m_targetRotation.z) / XM_PIDIV2;
+				m_rotationSpeedX = 0.0f;
+			}
 			break;
 		case ROTATE_DOWN:
-			m_rotationSpeedX += ROTATION_POWER;
+			m_rotationSpeedX -= ROTATION_POWER;			
+			if (m_targetRotation.z != 0.0f)
+			{
+				m_rotationSpeedX += ROTATION_POWER;
+				m_rotationSpeedY -= (ROTATION_POWER * m_targetRotation.z) / XM_PIDIV2;
+				m_rotationSpeedX = 0.0f;
+			}
 			break;
 		case ROTATE_RIGHT:
-			m_rotationSpeedY -= ROTATION_POWER;
+			m_rotationSpeedZ += ROTATION_POWER;						
 			break;
 		case ROTATE_LEFT:
-			m_rotationSpeedY += ROTATION_POWER;
+			m_rotationSpeedZ -= ROTATION_POWER;			
 			break;
-		}
+		}				
 
 		UpdateObjectTarget();
 	}
@@ -262,7 +274,11 @@ void Game::MooveObject(int mooveType)
 
 void Game::UpdateObjectTarget()
 {
-	m_targetRotation = XMFLOAT3(m_targetRotation.x + m_rotationSpeedX, m_targetRotation.y + m_rotationSpeedY, m_targetRotation.z + m_rotationSpeedZ);
+	m_targetRotation = XMFLOAT3(
+		m_targetRotation.x + m_rotationSpeedX, 
+		m_targetRotation.y + m_rotationSpeedY, 
+		m_targetRotation.z + m_rotationSpeedZ
+		);
 	m_initialRotation = m_currentRotation;
 	
 	m_targetTranslation += m_translationSpeed;

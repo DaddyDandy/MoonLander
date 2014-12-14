@@ -47,8 +47,8 @@ public:
 	bool GameStarted() { return m_isGameStarted; }
 	void GameStarted(bool val) { m_isGameStarted = val; }
 
-	/*bool AnimationRunning() { return m_isAnimationRunning; }
-	void AnimationRunning(bool val) { m_isAnimationRunning = val; }*/
+	bool AnimationRunning() { return m_isAnimationRunning; }
+	void AnimationRunning(bool val) { m_isAnimationRunning = val; }
 private:
 	std::vector<VSD3DStarter::Mesh*> m_meshModels;
 	std::vector<VSD3DStarter::Mesh*> m_moonModel;

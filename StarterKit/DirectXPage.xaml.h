@@ -15,7 +15,7 @@
 #include "..\Shared\Game.h"
 #include "..\Shared\BasicTimer.h"
 
-namespace StarterKit
+namespace MoonLander
 {
     /// <summary>
     /// A DirectX page that can be used on its own.  Note that it may not be used within a Frame.
