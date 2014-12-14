@@ -40,11 +40,11 @@ public:
 	void MooveObject(int mooveType);
 	void UpdateObjectTarget();
 
-	bool Pause() const { return m_isPause; }
+	bool Pause() { return m_isPause; }
 	void Pause(bool val) { m_isPause = val; }
-	bool Multiplayer() const { return m_isMultiplayer; }
+	bool Multiplayer() { return m_isMultiplayer; }
 	void Multiplayer(bool val) { m_isMultiplayer = val; }
-	bool GameStarted() const { return m_isGameStarted; }
+	bool GameStarted() { return m_isGameStarted; }
 	void GameStarted(bool val) { m_isGameStarted = val; }
 
 	/*bool AnimationRunning() { return m_isAnimationRunning; }
@@ -54,12 +54,12 @@ private:
 	std::vector<VSD3DStarter::Mesh*> m_moonModel;
 	std::vector<VSD3DStarter::Mesh*> m_starShipModel;
 
-	bool m_isGameStarted = false;
-	bool m_isPause = false;
-	bool m_isMultiplayer = false;
+	bool m_isGameStarted;
+	bool m_isPause;
+	bool m_isMultiplayer;
 
-	bool m_isAnimationRunning = false;
-	float m_animationTime = 0.0f;
+	bool m_isAnimationRunning;
+	float m_animationTime;
 
 	DirectX::XMFLOAT3 m_initialRotation;
 	DirectX::XMFLOAT3 m_currentRotation;

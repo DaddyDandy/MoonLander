@@ -21,9 +21,13 @@ using namespace Windows::UI::Core;
 using namespace VSD3DStarter;
 
 const float ROTATION_POWER = 0.01f;
-const float MOOVE_POWER = 0.01f;
-static const float ANIMATION_DURATION = 0.2f;
+const float MOOVE_POWER = 0.05f;
+const float ANIMATION_DURATION = 0.2f;
 const float MOON_GA = 1.6f;
+
+const float START_CAM_POS_X = 0.0f;
+const float START_CAM_POS_Y = 1.0f;
+const float START_CAM_POS_Z = -2.5f;
 
 Game::Game()
 {
@@ -31,6 +35,10 @@ Game::Game()
 	m_rotationSpeedY = 0.0f;
 	m_rotationSpeedZ = 0.0f;
 	m_translationSpeed = 0.0f;
+
+	m_isGameStarted = false;
+	m_isPause = false;
+	m_isMultiplayer = false;
 }
 
 Game::~Game()
@@ -50,7 +58,7 @@ void Game::CreateWindowSizeDependentResources()
 
 	// setup camera for our scene
 	m_graphics.GetCamera().SetViewport((UINT)m_windowBounds.Width, (UINT)m_windowBounds.Height);
-	m_graphics.GetCamera().SetPosition(XMFLOAT3(0.0f, 12.0f, -22.0f));
+	m_graphics.GetCamera().SetPosition(XMFLOAT3(START_CAM_POS_X, START_CAM_POS_Y, START_CAM_POS_Z));
 	m_graphics.GetCamera().SetLookAt(XMFLOAT3(0.0f, 0.0f, 0.0f));
 
 	float fovAngleY = 70.0f * XM_PI / 180.0f;
@@ -150,7 +158,7 @@ String^ Game::OnHitObject(int x, int y)
 
 void Game::Update(float timeTotal, float timeDelta)
 {
-	if (true) // !pause
+	if (!Pause()) // !pause
 	{
 		m_animationTime += timeDelta;
 		float rotateAnimationProgress = std::min<float>(m_animationTime / ANIMATION_DURATION, 0.4f);
@@ -166,7 +174,7 @@ void Game::Update(float timeTotal, float timeDelta)
 		m_currentTranslation = currentT;
 
 		float fallAnimationProgress = std::min<float>(m_animationTime / ANIMATION_DURATION, 1.0f);
-		m_gravitationTranslation = -1.0f * (timeTotal * MOON_GA);
+		//m_gravitationTranslation = -1.0f * (timeTotal * MOON_GA);
 	}
 }
 
@@ -175,10 +183,20 @@ void Game::Render()
 	GameBase::Render();
 	Clear();
 
+	// reset camera
+	m_graphics.GetCamera().SetPosition(XMFLOAT3(START_CAM_POS_X, START_CAM_POS_Y + m_gravitationTranslation, START_CAM_POS_Z + m_currentTranslation));
+	m_graphics.GetCamera().SetLookAt(XMFLOAT3(0.0f, m_gravitationTranslation, m_currentTranslation));
+
+	// render ship
 	XMMATRIX transform = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_currentRotation));
-	transform *= XMMatrixTranslation(0.0f, m_gravitationTranslation, m_currentTranslation);
-	m_starShipModel[0]->Render(m_graphics, transform);
-	transform = XMMatrixIdentity();
+	transform *= XMMatrixTranslation(0.0f, m_gravitationTranslation, m_currentTranslation);		
+	for (UINT i = 0; i < m_starShipModel.size(); i++)
+	{
+		m_starShipModel[i]->Render(m_graphics, transform);
+	}
+
+	// render Moon
+	transform = XMMatrixTranslation(0.0f, -30.0f, 0.0f);
 	for (UINT i = 0; i < m_moonModel.size(); i++)
 	{
 		m_moonModel[i]->Render(m_graphics, transform);
@@ -192,46 +210,54 @@ void Game::Render()
 		m_d3dContext->ResolveSubresource(m_backBuffer.Get(), resourceIndex, m_backBufferMsaa.Get(), resourceIndex, DXGI_FORMAT_B8G8R8A8_UNORM);
 	}
 
-	UpdateObjectTarget();
+	if (!Pause())
+	{
+		UpdateObjectTarget();
+	}	
 }
 
 void Game::RotateObject(int rotationType)
 {
-	switch (rotationType)
+	if (!Pause())
 	{
-	case ROTATE_UP:
-		m_rotationSpeedX -= ROTATION_POWER;
-		break;
-	case ROTATE_DOWN:
-		m_rotationSpeedX += ROTATION_POWER;
-		break;
-	case ROTATE_RIGHT:
-		m_rotationSpeedY -= ROTATION_POWER;
-		break;
-	case ROTATE_LEFT:
-		m_rotationSpeedY += ROTATION_POWER;
-		break;
-	}
+		switch (rotationType)
+		{
+		case ROTATE_UP:
+			m_rotationSpeedX -= ROTATION_POWER;
+			break;
+		case ROTATE_DOWN:
+			m_rotationSpeedX += ROTATION_POWER;
+			break;
+		case ROTATE_RIGHT:
+			m_rotationSpeedY -= ROTATION_POWER;
+			break;
+		case ROTATE_LEFT:
+			m_rotationSpeedY += ROTATION_POWER;
+			break;
+		}
 
-	UpdateObjectTarget();
+		UpdateObjectTarget();
+	}
 }
 
 
 
 void Game::MooveObject(int mooveType)
 {
-	switch (mooveType)
+	if (!Pause())
 	{
-	case MOOVE_FORWARD:
-		m_translationSpeed += MOOVE_POWER;
-		break;
-	case MOOVE_BACKWARD:
-		m_translationSpeed -= MOOVE_POWER;
-		break;
-	}
+		switch (mooveType)
+		{
+		case MOOVE_FORWARD:
+			m_translationSpeed += MOOVE_POWER;
+			break;
+		case MOOVE_BACKWARD:
+			m_translationSpeed -= MOOVE_POWER;
+			break;
+		}
 
-	//m_targetTranslation += m_translationSpeed;
-	UpdateObjectTarget();
+		UpdateObjectTarget();
+	}
 }
 
 void Game::UpdateObjectTarget()
