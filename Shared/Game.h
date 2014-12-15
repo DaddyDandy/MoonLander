@@ -39,20 +39,24 @@ public:
 	void RotateObject(int rotationType);
 	void MooveObject(int mooveType);
 	void UpdateObjectTarget();
+	void UseGravitation();
+	void UseTranslation();
 
 	bool Pause() { return m_isPause; }
 	void Pause(bool val) { m_isPause = val; }
 	bool Multiplayer() { return m_isMultiplayer; }
 	void Multiplayer(bool val) { m_isMultiplayer = val; }
 	bool GameStarted() { return m_isGameStarted; }
-	void GameStarted(bool val) { m_isGameStarted = val; }
+	void GameStarted(bool val) { m_isGameStarted = val; }	
 
 	bool AnimationRunning() { return m_isAnimationRunning; }
 	void AnimationRunning(bool val) { m_isAnimationRunning = val; }
 private:
-	std::vector<VSD3DStarter::Mesh*> m_meshModels;
+
 	std::vector<VSD3DStarter::Mesh*> m_moonModel;
+	std::vector<VSD3DStarter::Mesh*> m_landingPointModel;
 	std::vector<VSD3DStarter::Mesh*> m_starShipModel;
+	std::vector<VSD3DStarter::Mesh*> m_backModel;
 
 	bool m_isGameStarted;
 	bool m_isPause;
@@ -61,13 +65,21 @@ private:
 	bool m_isAnimationRunning;
 	float m_animationTime;
 
+	float m_animationGravTime;
+
 	DirectX::XMFLOAT3 m_initialRotation;
 	DirectX::XMFLOAT3 m_currentRotation;
 	DirectX::XMFLOAT3 m_targetRotation;
 
+
+
 	float m_initialTranslation;
 	float m_currentTranslation;
 	float m_targetTranslation;
+
+	float m_initialGT;
+	float m_currentGT;
+	float m_targetGT;
 	float m_gravitationTranslation;
 
 	float m_gravitationTime;
@@ -77,4 +89,8 @@ private:
 	float m_rotationSpeedZ;
 
 	float m_translationSpeed;
+
+	float m_landingX;
+	float m_landingY;
+	float m_landingZ;
 };

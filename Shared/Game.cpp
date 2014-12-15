@@ -21,12 +21,13 @@ using namespace Windows::UI::Core;
 using namespace VSD3DStarter;
 
 const float ROTATION_POWER = 0.01f;
-const float MOOVE_POWER = 0.05f;
+const float MOOVE_POWER = 0.1f;
 const float ANIMATION_DURATION = 0.2f;
+const float GRAVITATION_ANIMATION_DURATION = 1.0f;
 const float MOON_GA = 1.6f;
 
 const float START_CAM_POS_X = 0.0f;
-const float START_CAM_POS_Y = 1.0f;
+const float START_CAM_POS_Y = 0.5f;
 const float START_CAM_POS_Z = -2.5f;
 
 Game::Game()
@@ -39,15 +40,37 @@ Game::Game()
 	m_isGameStarted = false;
 	m_isPause = false;
 	m_isMultiplayer = false;
+
+	m_landingX = 25.0f;
+	m_landingY = -50.0f;
+	m_landingZ = 100.0f;
 }
 
 Game::~Game()
 {
-	for (Mesh* m : m_meshModels)
+	for (Mesh* m : m_backModel)
 	{
 		delete m;
 	}
-	m_meshModels.clear();
+	m_backModel.clear();
+
+	for (Mesh* m : m_moonModel)
+	{
+		delete m;
+	}
+	m_moonModel.clear();
+
+	for (Mesh* m : m_landingPointModel)
+	{
+		delete m;
+	}
+	m_landingPointModel.clear();
+
+	for (Mesh* m : m_starShipModel)
+	{
+		delete m;
+	}
+	m_starShipModel.clear();
 }
 
 void Game::CreateWindowSizeDependentResources()
@@ -68,7 +91,6 @@ void Game::CreateWindowSizeDependentResources()
 		/// portrait or snap view
 		m_graphics.GetCamera().SetUpVector(XMFLOAT3(1.0f, 0.0f, 0.0f));
 		fovAngleY = 120.0f * XM_PI / 180.0f;
-
 	}
 	else
 	{
@@ -76,7 +98,7 @@ void Game::CreateWindowSizeDependentResources()
 		m_graphics.GetCamera().SetUpVector(XMFLOAT3(0.0f, 1.0f, 0.0f));
 	}
 
-	m_graphics.GetCamera().SetProjection(fovAngleY, aspectRatio, 1.0f, 1000.0f);
+	m_graphics.GetCamera().SetProjection(fovAngleY, aspectRatio, 1.0f, 1500.0f);
 
 	// setup lighting for our scene
 	XMFLOAT3 pos = XMFLOAT3(5.0f, 5.0f, -2.5f);
@@ -102,6 +124,8 @@ void Game::Initialize()
 {
 	Mesh::LoadFromFile(m_graphics, L"StarShip.cmo", L"", L"", m_starShipModel);
 	Mesh::LoadFromFile(m_graphics, L"TheMoon.cmo", L"", L"", m_moonModel);
+	Mesh::LoadFromFile(m_graphics, L"LandingPoint.cmo", L"", L"", m_landingPointModel);
+	Mesh::LoadFromFile(m_graphics, L"Back.cmo", L"", L"", m_backModel);
 }
 
 void Game::Clear()
@@ -115,7 +139,7 @@ void Game::Clear()
 
 	m_d3dContext->ClearRenderTargetView(
 		m_d3dRenderTargetView.Get(),
-		DirectX::Colors::DarkSlateGray
+		DirectX::Colors::Black
 		);
 
 	m_d3dContext->ClearDepthStencilView(
@@ -128,39 +152,15 @@ void Game::Clear()
 
 String^ Game::OnHitObject(int x, int y)
 {
-	String^ result = nullptr;
-
-	XMFLOAT3 point;
-	XMFLOAT3 dir;
-	m_graphics.GetCamera().GetWorldLine(x, y, &point, &dir);
-
-	XMFLOAT4X4 world;
-	XMMATRIX worldMat = XMMatrixIdentity();
-	XMStoreFloat4x4(&world, worldMat);
-
-	float closestT = FLT_MAX;
-	for (Mesh* m : m_meshModels)
-	{
-		XMFLOAT4X4 meshTransform = world;
-
-		auto name = ref new String(m->Name());
-
-		float t = 0;
-		bool hit = this->LineHitTest(m, &point, &dir, &meshTransform, &t);
-		if (hit && t < closestT)
-		{
-			result = name;
-		}
-	}
-
-	return result;
+	return "";
 }
 
 void Game::Update(float timeTotal, float timeDelta)
 {
-	if (!Pause()) // !pause
+	if (!Pause())
 	{
 		m_animationTime += timeDelta;
+		m_animationGravTime += timeDelta;
 		float rotateAnimationProgress = std::min<float>(m_animationTime / ANIMATION_DURATION, 0.4f);
 
 		XMVECTOR initial = XMLoadFloat3(&m_initialRotation);
@@ -168,38 +168,68 @@ void Game::Update(float timeTotal, float timeDelta)
 		XMVECTOR current = initial + rotateAnimationProgress * (target - initial);
 		XMStoreFloat3(&m_currentRotation, current);
 
-		float initialT = m_initialTranslation;
-		float targetT = m_targetTranslation;
-		float currentT = initialT + rotateAnimationProgress * (targetT - initialT);
-		m_currentTranslation = currentT;
+		UseTranslation();
+		UseGravitation();
 
-		//float fallAnimationProgress = std::min<float>(m_animationTime / ANIMATION_DURATION, 1.0f);
-		//m_gravitationTranslation = -1.0f * (timeTotal * MOON_GA);
+		// reset camera
+		m_graphics.GetCamera().SetPosition(XMFLOAT3(START_CAM_POS_X, START_CAM_POS_Y + m_gravitationTranslation, START_CAM_POS_Z + m_currentTranslation + m_currentTranslation));
+		m_graphics.GetCamera().SetLookAt(XMFLOAT3(0.0f, m_currentTranslation - m_currentGT, m_currentTranslation));
+
+		UpdateObjectTarget();
 	}
+
+}
+
+void Game::UseTranslation()
+{
+	float animationProgres = std::min<float>(m_animationTime / ANIMATION_DURATION, 0.4f);
+	float initialT = m_initialTranslation;
+	float targetT = m_targetTranslation;
+	float currentT = initialT + animationProgres * (targetT - initialT);
+	m_currentTranslation = currentT;
+}
+
+void Game::UseGravitation()
+{
+	float fallAnimationProgress = std::min<float>(m_animationTime / ANIMATION_DURATION, 0.4f);
+	float initial = m_initialGT;
+	float target = m_targetGT;
+	float current = initial + fallAnimationProgress * (target - initial);
+	m_currentGT = current;
 }
 
 void Game::Render()
 {
 	GameBase::Render();
-	Clear();
-
-	// reset camera
-	m_graphics.GetCamera().SetPosition(XMFLOAT3(START_CAM_POS_X, START_CAM_POS_Y + m_gravitationTranslation, START_CAM_POS_Z + m_currentTranslation));
-	m_graphics.GetCamera().SetLookAt(XMFLOAT3(0.0f, m_gravitationTranslation, m_currentTranslation));
+	Clear();	
 
 	// render ship
 	XMMATRIX transform = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_currentRotation));
-	transform *= XMMatrixTranslation(0.0f, m_gravitationTranslation, m_currentTranslation);		
+	transform *= XMMatrixTranslation(0.0f, m_currentTranslation - m_currentGT, m_currentTranslation);
 	for (UINT i = 0; i < m_starShipModel.size(); i++)
 	{
 		m_starShipModel[i]->Render(m_graphics, transform);
 	}
 
 	// render Moon
-	transform = XMMatrixTranslation(0.0f, -100.0f, 0.0f);
+	transform = XMMatrixTranslation(0.0f, -250.0f, 0.0f);
 	for (UINT i = 0; i < m_moonModel.size(); i++)
 	{
 		m_moonModel[i]->Render(m_graphics, transform);
+	}
+
+	// render Landing point
+	transform = XMMatrixTranslation(m_landingX, m_landingY, m_landingZ);
+	for (UINT i = 0; i < m_landingPointModel.size(); i++)
+	{
+		m_landingPointModel[i]->Render(m_graphics, transform);
+	}
+
+	// render Back model
+	transform = XMMatrixTranslation(0.0f, -250.0f, m_currentTranslation);
+	for (UINT i = 0; i < m_backModel.size(); i++)
+	{
+		m_backModel[i]->Render(m_graphics, transform);
 	}
 
 	// only enable MSAA if the device has enough power
@@ -212,7 +242,7 @@ void Game::Render()
 
 	if (!Pause())
 	{
-		UpdateObjectTarget();
+		
 	}	
 }
 
@@ -284,6 +314,10 @@ void Game::UpdateObjectTarget()
 	m_targetTranslation += m_translationSpeed;
 	m_initialTranslation = m_currentTranslation;
 
+	m_targetGT += 0.05f;
+	m_initialGT = m_currentGT;
+
+	m_animationGravTime = 0.0f;
 	m_animationTime = 0.0f;
 	m_isAnimationRunning = true;
 }

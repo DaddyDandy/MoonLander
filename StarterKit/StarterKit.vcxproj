@@ -187,6 +187,8 @@
     <None Include="StarterKit_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <MeshContentTask Include="Back.fbx" />
+    <MeshContentTask Include="LandingPoint.fbx" />
     <MeshContentTask Include="StarShip.FBX" />
     <MeshContentTask Include="TheMoon.FBX" />
   </ItemGroup>
