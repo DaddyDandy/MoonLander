@@ -2,7 +2,7 @@
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
   <Identity Name="VS3DMoonLander-Clean" Publisher="CN=VSD3DMoonLander" Version="1.0.0.0" />
   <Properties>
-    <DisplayName>VS 3D Starter Kit</DisplayName>
+    <DisplayName>Moon Lander</DisplayName>
     <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -17,7 +17,7 @@
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="MoonLander.App">
       <VisualElements DisplayName="VS 3D Starter Kit" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="Game" ForegroundText="light" BackgroundColor="#742894">
         <DefaultTile ShowName="logoOnly" />
-        <SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#ffffff"/>
+        <SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#ffffff" />
       </VisualElements>
     </Application>
   </Applications>

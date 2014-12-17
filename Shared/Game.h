@@ -39,7 +39,7 @@ public:
 	void RotateObject(int rotationType);
 	void MooveObject(int mooveType);
 	void UpdateObjectTarget();
-	void UseGravitation();
+	void UseGravitation(float delta);
 	void UseTranslation();
 
 	bool Pause() { return m_isPause; }
