@@ -161,41 +161,15 @@ void Game::Update(float timeTotal, float timeDelta)
 	{
 		m_animationTime += timeDelta;
 		m_animationGravTime += timeDelta;
-		float rotateAnimationProgress = std::min<float>(m_animationTime / ANIMATION_DURATION, 0.4f);
-
-		XMVECTOR initial = XMLoadFloat3(&m_initialRotation);
-		XMVECTOR target = XMLoadFloat3(&m_targetRotation);
-		XMVECTOR current = initial + rotateAnimationProgress * (target - initial);
-		XMStoreFloat3(&m_currentRotation, current);
-
+		
+		UseRotation();
 		UseTranslation();
 		UseGravitation();
 
-		// reset camera
-		m_graphics.GetCamera().SetPosition(XMFLOAT3(START_CAM_POS_X, START_CAM_POS_Y + m_gravitationTranslation, START_CAM_POS_Z + m_currentTranslation + m_currentTranslation));
-		m_graphics.GetCamera().SetLookAt(XMFLOAT3(0.0f, m_currentTranslation - m_currentGT, m_currentTranslation));
+		UpdateCameraPosition();		
 
 		UpdateObjectTarget();
 	}
-
-}
-
-void Game::UseTranslation()
-{
-	float animationProgres = std::min<float>(m_animationTime / ANIMATION_DURATION, 0.4f);
-	float initialT = m_initialTranslation;
-	float targetT = m_targetTranslation;
-	float currentT = initialT + animationProgres * (targetT - initialT);
-	m_currentTranslation = currentT;
-}
-
-void Game::UseGravitation()
-{
-	float fallAnimationProgress = std::min<float>(m_animationTime / ANIMATION_DURATION, 0.4f);
-	float initial = m_initialGT;
-	float target = m_targetGT;
-	float current = initial + fallAnimationProgress * (target - initial);
-	m_currentGT = current;
 }
 
 void Game::Render()
@@ -238,11 +212,6 @@ void Game::Render()
 		// resolve multi-sample textures into single-sample textures
 		UINT resourceIndex = D3D11CalcSubresource(0, 0, 1);
 		m_d3dContext->ResolveSubresource(m_backBuffer.Get(), resourceIndex, m_backBufferMsaa.Get(), resourceIndex, DXGI_FORMAT_B8G8R8A8_UNORM);
-	}
-
-	if (!Pause())
-	{
-		
 	}	
 }
 
@@ -253,36 +222,22 @@ void Game::RotateObject(int rotationType)
 		switch (rotationType)
 		{
 		case ROTATE_UP:
-			m_rotationSpeedX += ROTATION_POWER;			
-			if (m_targetRotation.z != 0.0f)
-			{
-				m_rotationSpeedX -= ROTATION_POWER;
-				m_rotationSpeedY += (ROTATION_POWER * m_targetRotation.z) / XM_PIDIV2;
-				m_rotationSpeedX = 0.0f;
-			}
+			m_rotationSpeedX -= ROTATION_POWER;			
 			break;
 		case ROTATE_DOWN:
-			m_rotationSpeedX -= ROTATION_POWER;			
-			if (m_targetRotation.z != 0.0f)
-			{
-				m_rotationSpeedX += ROTATION_POWER;
-				m_rotationSpeedY -= (ROTATION_POWER * m_targetRotation.z) / XM_PIDIV2;
-				m_rotationSpeedX = 0.0f;
-			}
+			m_rotationSpeedX += ROTATION_POWER;			
 			break;
 		case ROTATE_RIGHT:
-			m_rotationSpeedZ += ROTATION_POWER;						
+			m_rotationSpeedY -= ROTATION_POWER;						
 			break;
 		case ROTATE_LEFT:
-			m_rotationSpeedZ -= ROTATION_POWER;			
+			m_rotationSpeedY += ROTATION_POWER;			
 			break;
 		}				
 
 		UpdateObjectTarget();
 	}
 }
-
-
 
 void Game::MooveObject(int mooveType)
 {
@@ -304,20 +259,67 @@ void Game::MooveObject(int mooveType)
 
 void Game::UpdateObjectTarget()
 {
-	m_targetRotation = XMFLOAT3(
-		m_targetRotation.x + m_rotationSpeedX, 
-		m_targetRotation.y + m_rotationSpeedY, 
-		m_targetRotation.z + m_rotationSpeedZ
-		);
-	m_initialRotation = m_currentRotation;
-	
-	m_targetTranslation += m_translationSpeed;
-	m_initialTranslation = m_currentTranslation;
-
-	m_targetGT += 0.05f;
-	m_initialGT = m_currentGT;
+	CountRotation();	
+	CountTranslation();	
+	CountGravitation();
 
 	m_animationGravTime = 0.0f;
 	m_animationTime = 0.0f;
 	m_isAnimationRunning = true;
+}
+
+void Game::CountTranslation()
+{
+	m_targetTranslation += m_translationSpeed;
+	m_initialTranslation = m_currentTranslation;
+}
+
+void Game::CountRotation()
+{
+	m_targetRotation = XMFLOAT3(
+		m_targetRotation.x + m_rotationSpeedX,
+		m_targetRotation.y + m_rotationSpeedY,
+		m_targetRotation.z + m_rotationSpeedZ
+		);
+	m_initialRotation = m_currentRotation;
+}
+
+void Game::CountGravitation()
+{
+	m_targetGT += 0.05f;
+	m_initialGT = m_currentGT;
+}
+
+void Game::UseRotation()
+{
+	float rotateAnimationProgress = std::min<float>(m_animationTime / ANIMATION_DURATION, 0.4f);
+
+	XMVECTOR initial = XMLoadFloat3(&m_initialRotation);
+	XMVECTOR target = XMLoadFloat3(&m_targetRotation);
+	XMVECTOR current = initial + rotateAnimationProgress * (target - initial);
+	XMStoreFloat3(&m_currentRotation, current);
+}
+
+void Game::UseTranslation()
+{
+	float animationProgres = std::min<float>(m_animationTime / ANIMATION_DURATION, 0.4f);
+	float initialT = m_initialTranslation;
+	float targetT = m_targetTranslation;
+	float currentT = initialT + animationProgres * (targetT - initialT);
+	m_currentTranslation = currentT;
+}
+
+void Game::UseGravitation()
+{
+	float fallAnimationProgress = std::min<float>(m_animationTime / ANIMATION_DURATION, 0.4f);
+	float initial = m_initialGT;
+	float target = m_targetGT;
+	float current = initial + fallAnimationProgress * (target - initial);
+	m_currentGT = current;
+}
+
+void Game::UpdateCameraPosition()
+{
+	m_graphics.GetCamera().SetPosition(XMFLOAT3(START_CAM_POS_X, START_CAM_POS_Y + m_gravitationTranslation, START_CAM_POS_Z + m_currentTranslation + m_currentTranslation));
+	m_graphics.GetCamera().SetLookAt(XMFLOAT3(0.0f, m_currentTranslation - m_currentGT, m_currentTranslation));
 }

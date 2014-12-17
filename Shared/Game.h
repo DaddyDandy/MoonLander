@@ -39,8 +39,16 @@ public:
 	void RotateObject(int rotationType);
 	void MooveObject(int mooveType);
 	void UpdateObjectTarget();
+
+	void UseRotation();
 	void UseGravitation();
 	void UseTranslation();
+
+	void CountTranslation();
+	void CountRotation();
+	void CountGravitation();
+
+	void UpdateCameraPosition();
 
 	bool Pause() { return m_isPause; }
 	void Pause(bool val) { m_isPause = val; }
@@ -71,7 +79,9 @@ private:
 	DirectX::XMFLOAT3 m_currentRotation;
 	DirectX::XMFLOAT3 m_targetRotation;
 
-
+	DirectX::XMVECTOR m_initialTranslation_v;
+	DirectX::XMVECTOR m_currentTranslation_v;
+	DirectX::XMVECTOR m_targetTranslation_v;
 
 	float m_initialTranslation;
 	float m_currentTranslation;
