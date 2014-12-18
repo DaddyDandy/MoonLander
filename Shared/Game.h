@@ -72,6 +72,8 @@ private:
 
 	bool m_isAnimationRunning;
 	float m_animationTime;
+	float m_generalAnimationProgress;
+	float m_totalTime;
 
 	float m_animationGravTime;
 
@@ -82,10 +84,8 @@ private:
 	DirectX::XMVECTOR m_initialTranslation_v;
 	DirectX::XMVECTOR m_currentTranslation_v;
 	DirectX::XMVECTOR m_targetTranslation_v;
-
-	float m_initialTranslation;
-	float m_currentTranslation;
-	float m_targetTranslation;
+	DirectX::XMVECTOR m_basicTransation;
+	DirectX::XMVECTOR m_basicVector;
 
 	float m_initialGT;
 	float m_currentGT;
