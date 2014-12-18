@@ -81,10 +81,21 @@ private:
 	DirectX::XMFLOAT3 m_currentRotation;
 	DirectX::XMFLOAT3 m_targetRotation;
 
-	DirectX::XMVECTOR m_initialTranslation_v;
-	DirectX::XMVECTOR m_currentTranslation_v;
-	DirectX::XMVECTOR m_targetTranslation_v;
-	DirectX::XMVECTOR m_basicTransation;
+	DirectX::XMVECTOR m_initialTranslation_v_x;
+	DirectX::XMVECTOR m_currentTranslation_v_x;
+	DirectX::XMVECTOR m_targetTranslation_v_x;
+
+	DirectX::XMVECTOR m_initialTranslation_v_y;
+	DirectX::XMVECTOR m_currentTranslation_v_y;
+	DirectX::XMVECTOR m_targetTranslation_v_y;
+
+	DirectX::XMVECTOR m_initialTranslation_v_z;
+	DirectX::XMVECTOR m_currentTranslation_v_z;
+	DirectX::XMVECTOR m_targetTranslation_v_z;
+
+	DirectX::XMVECTOR m_basicTranlsation_x;
+	DirectX::XMVECTOR m_basicTranlsation_y;
+	DirectX::XMVECTOR m_basicTranlsation_z;
 	DirectX::XMVECTOR m_basicVector;
 
 	float m_initialGT;

@@ -47,7 +47,7 @@ Game::Game()
 
 	XMVECTOR a = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	m_basicVector = a;
-	m_initialTranslation_v = a;
+	m_initialTranslation_v_x = a;
 }
 
 Game::~Game()
@@ -184,7 +184,9 @@ void Game::Render()
 
 	// render ship
 	XMMATRIX transform = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_currentRotation));
-	transform *= XMMatrixTranslationFromVector(m_currentTranslation_v);
+	//transform *= XMMatrixTranslationFromVector(m_currentTranslation_v_x);
+	transform *= XMMatrixTranslationFromVector(m_currentTranslation_v_y);
+	//transform *= XMMatrixTranslationFromVector(m_currentTranslation_v_z);
 	transform *= XMMatrixTranslation(0.0f, -m_targetGT, 0.0f);
 	for (UINT i = 0; i < m_starShipModel.size(); i++)
 	{
@@ -206,7 +208,7 @@ void Game::Render()
 	}
 
 	// render Back model
-	transform = XMMatrixTranslation(0.0f, -250.0f, XMVectorGetZ(m_currentTranslation_v));
+	transform = XMMatrixTranslation(0.0f, -250.0f, XMVectorGetZ(m_currentTranslation_v_x));
 	for (UINT i = 0; i < m_backModel.size(); i++)
 	{
 		m_backModel[i]->Render(m_graphics, transform);
@@ -247,40 +249,41 @@ void Game::MooveObject(int mooveType)
 {
 	if (!Pause())
 	{
-		float sinX = XMScalarSin(m_targetRotation.x),
-			cosX = XMScalarCos(m_targetRotation.x);
+		float sinX = XMScalarSin(m_currentRotation.x),
+			cosX = XMScalarCos(m_currentRotation.x);
 
-		float sinY = XMScalarSin(m_targetRotation.y),
-			cosY = XMScalarCos(m_targetRotation.y);
+		float sinY = XMScalarSin(m_currentRotation.y),
+			cosY = XMScalarCos(m_currentRotation.y);
 
-		float sinZ = XMScalarSin(m_targetRotation.z),
-			cosZ = XMScalarCos(m_targetRotation.z);
+		float sinZ = XMScalarSin(m_currentRotation.z),
+			cosZ = XMScalarCos(m_currentRotation.z);
 
-		XMVECTOR v1 = XMVectorSet(XMVectorGetX(m_initialTranslation_v),
-			XMVectorGetY(m_initialTranslation_v) * cosX - XMVectorGetZ(m_initialTranslation_v) * sinX,
-			XMVectorGetY(m_initialTranslation_v) * sinX + XMVectorGetZ(m_initialTranslation_v) * cosX,
+		XMVECTOR v1 = XMVectorSet(XMVectorGetX(m_initialTranslation_v_x),
+			XMVectorGetY(m_initialTranslation_v_x) * cosX - XMVectorGetZ(m_initialTranslation_v_x) * sinX,
+			XMVectorGetY(m_initialTranslation_v_x) * sinX + XMVectorGetZ(m_initialTranslation_v_x) * cosX,
 			0.0f);
 
-		XMVECTOR v2 = XMVectorSet(XMVectorGetX(m_initialTranslation_v) * cosY + XMVectorGetZ(m_initialTranslation_v) * sinY,
-			XMVectorGetY(m_initialTranslation_v),
-			XMVectorGetZ(m_initialTranslation_v) * cosX + XMVectorGetX(m_initialTranslation_v) * sinY,
+		XMVECTOR v2 = XMVectorSet(XMVectorGetX(m_initialTranslation_v_x) * cosY + XMVectorGetZ(m_initialTranslation_v_x) * sinY,
+			XMVectorGetY(m_initialTranslation_v_x),
+			XMVectorGetZ(m_initialTranslation_v_x) * cosX + XMVectorGetX(m_initialTranslation_v_x) * sinY,
 			0.0f);
 
-		XMVECTOR v3 = XMVectorSet(XMVectorGetX(m_initialTranslation_v) * cosZ - XMVectorGetY(m_initialTranslation_v) * sinZ,
-			XMVectorGetX(m_initialTranslation_v) * sinZ + XMVectorGetY(m_initialTranslation_v) * cosZ,
-			XMVectorGetZ(m_initialTranslation_v),
+		XMVECTOR v3 = XMVectorSet(XMVectorGetX(m_initialTranslation_v_x) * cosZ - XMVectorGetY(m_initialTranslation_v_x) * sinZ,
+			XMVectorGetX(m_initialTranslation_v_x) * sinZ + XMVectorGetY(m_initialTranslation_v_x) * cosZ,
+			XMVectorGetZ(m_initialTranslation_v_x),
 			0.0f);
 
-		m_basicTransation = XMVectorAdd(v1, v2);
-		m_basicTransation = XMVectorAdd(m_basicTransation, v3);
+		//m_basicTranlsation_x = XMVectorAdd(m_basicTranlsation_x, v1);
+		m_basicTranlsation_y = XMVectorAdd(m_basicTranlsation_y, v2);
+		//m_basicTranlsation_z = XMVectorAdd(m_basicTranlsation_z, v3);		
 
 		/*switch (mooveType)
 		{
 		case MOOVE_FORWARD:
-		m_targetTranslation_v += m_basicTransation;
+		m_targetTranslation_v *= 1.0f;
 		break;
 		case MOOVE_BACKWARD:
-		m_targetTranslation_v -= m_basicTransation;
+		m_targetTranslation_v *= -1.0f;
 		break;
 		}*/
 	}
@@ -299,9 +302,13 @@ void Game::UpdateObjectTarget()
 
 void Game::CountTranslation()
 {
-	m_targetTranslation_v += XMVector3Normalize(m_basicTransation);
-	//m_targetTranslation_v += m_basicTransation;
-	m_initialTranslation_v = m_currentTranslation_v;
+	m_targetTranslation_v_x += XMVector3Normalize(m_basicTranlsation_x);
+	m_targetTranslation_v_y += XMVector3Normalize(m_basicTranlsation_y);
+	m_targetTranslation_v_z += XMVector3Normalize(m_basicTranlsation_z);
+
+	m_initialTranslation_v_x = m_currentTranslation_v_x;
+	m_initialTranslation_v_y = m_currentTranslation_v_y;
+	m_initialTranslation_v_z = m_currentTranslation_v_z;
 }
 
 void Game::CountRotation()
@@ -334,10 +341,20 @@ void Game::UseTranslation()
 {
 	float translateAnimationProgres = std::min<float>(m_animationTime / ANIMATION_DURATION, 0.4f);
 
-	XMVECTOR initial = m_initialTranslation_v;
-	XMVECTOR target = m_targetTranslation_v;
+	/*XMVECTOR initial = m_initialTranslation_v_x;
+	XMVECTOR target = m_targetTranslation_v_x;
 	XMVECTOR current = initial + translateAnimationProgres * (target - initial);
-	m_currentTranslation_v = current;
+	m_currentTranslation_v_x = current;*/
+
+	XMVECTOR initial = m_initialTranslation_v_y;
+	XMVECTOR target = m_targetTranslation_v_y;
+	XMVECTOR current = initial + translateAnimationProgres * (target - initial);
+	m_currentTranslation_v_y = current;
+
+	/*initial = m_initialTranslation_v_z;
+	target = m_targetTranslation_v_z;
+	current = initial + translateAnimationProgres * (target - initial);
+	m_currentTranslation_v_z = current;*/
 }
 
 void Game::UseGravitation()
@@ -352,9 +369,9 @@ void Game::UseGravitation()
 
 void Game::UpdateCameraPosition()
 {
-	float x = XMVectorGetX(m_currentTranslation_v),
-		y = XMVectorGetY(m_currentTranslation_v),
-		z = XMVectorGetZ(m_currentTranslation_v);
+	float x = XMVectorGetX(m_currentTranslation_v_x),
+		y = XMVectorGetY(m_currentTranslation_v_x),
+		z = XMVectorGetZ(m_currentTranslation_v_x);
 
 	m_graphics.GetCamera().SetPosition(XMFLOAT3(
 		START_CAM_POS_X + x,
