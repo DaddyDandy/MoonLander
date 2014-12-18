@@ -84,6 +84,8 @@ private:
 	DirectX::XMVECTOR m_initialTranslation_v_x;
 	DirectX::XMVECTOR m_currentTranslation_v_x;
 	DirectX::XMVECTOR m_targetTranslation_v_x;
+	DirectX::XMVECTOR m_basicTranslation_x;
+	DirectX::XMVECTOR m_basicVector;	
 
 	DirectX::XMVECTOR m_initialTranslation_v_y;
 	DirectX::XMVECTOR m_currentTranslation_v_y;
@@ -93,10 +95,9 @@ private:
 	DirectX::XMVECTOR m_currentTranslation_v_z;
 	DirectX::XMVECTOR m_targetTranslation_v_z;
 
-	DirectX::XMVECTOR m_basicTranlsation_x;
-	DirectX::XMVECTOR m_basicTranlsation_y;
-	DirectX::XMVECTOR m_basicTranlsation_z;
-	DirectX::XMVECTOR m_basicVector;
+	DirectX::XMVECTOR m_basicTranslation_y;
+	DirectX::XMVECTOR m_basicTranslation_z;
+
 
 	float m_initialGT;
 	float m_currentGT;
