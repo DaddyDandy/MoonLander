@@ -32,23 +32,7 @@ const float START_CAM_POS_Z = -4.5f;
 
 Game::Game()
 {
-	m_rotationSpeedX = 0.0f;
-	m_rotationSpeedY = 0.0f;
-	m_rotationSpeedZ = 0.0f;
-	m_translationSpeed = 0.0f;
-
-	m_isGameStarted = false;
-	m_isPause = false;
-	m_isMultiplayer = false;
-
-	m_landingX = 5.0f;
-	m_landingY = -10.0f;
-	m_landingZ = 20.0f;
-
-	XMVECTOR a = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-	m_basicVector = a;
-	m_initialTranslation_v_x = m_basicVector;
-	m_initialTranslation_v_y = m_basicVector;
+	RestartGame();
 }
 
 Game::~Game()
@@ -175,6 +159,7 @@ void Game::Update(float timeTotal, float timeDelta)
 		//UpdateCameraPosition();
 
 		UpdateObjectTarget();
+		FinishGame();
 	}
 }
 
@@ -353,4 +338,58 @@ void Game::UpdateCameraPosition()
 		START_CAM_POS_Z + z1 + z2));
 	m_graphics.GetCamera().SetLookAt(XMFLOAT3(x1 + x2, y1 + y2, z1 + z2));
 
+}
+
+void Game::FinishGame()
+{
+	if (		 
+		(XMVectorGetZ(m_currentTranslation_v_x) <= m_landingZ + 5 && XMVectorGetZ(m_currentTranslation_v_x) >= m_landingZ - 5)
+		&& (XMVectorGetX(m_currentTranslation_v_y) <= m_landingX + 5 && XMVectorGetX(m_currentTranslation_v_y) >= m_landingX - 5)
+		)
+	{
+		Pause(true);
+		GameFinished(true);
+	}
+
+}
+
+void Game::RestartGame()
+{
+	GameFinished(true);
+	m_rotationSpeedX = 0.0f;
+	m_rotationSpeedY = 0.0f;
+	m_rotationSpeedZ = 0.0f;
+	m_translationSpeed = 0.0f;
+
+	m_landingX = 5.0f;
+	m_landingY = -10.0f;
+	m_landingZ = 20.0f;
+
+	m_basicVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	m_initialTranslation_v_x = m_basicVector;
+	m_initialTranslation_v_y = m_basicVector;
+	m_targetTranslation_v_x = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	m_targetTranslation_v_y = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	m_currentTranslation_v_x = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	m_currentTranslation_v_y = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+	m_initialRotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_currentRotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_targetRotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+	m_animationTime = 0.0f;
+	m_generalAnimationProgress = 0.0f;
+	m_totalTime = 0.0f;
+
+	m_basicTranslation_y = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	m_basicTranslation_z = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	m_basicTranslation_x = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	m_basicVector = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+	m_initialGT = 0.0f;
+	m_currentGT = 0.0f;
+	m_targetGT = 0.0f;
+	m_gravitationTranslation = 0.0f;
+
+	m_gravitationTime = 0.0f;
 }

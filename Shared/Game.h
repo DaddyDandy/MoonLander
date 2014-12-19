@@ -49,6 +49,8 @@ public:
 	void CountGravitation();
 
 	void UpdateCameraPosition();
+	void FinishGame();
+	void RestartGame();
 
 	bool Pause() { return m_isPause; }
 	void Pause(bool val) { m_isPause = val; }
@@ -56,7 +58,8 @@ public:
 	void Multiplayer(bool val) { m_isMultiplayer = val; }
 	bool GameStarted() { return m_isGameStarted; }
 	void GameStarted(bool val) { m_isGameStarted = val; }	
-
+	bool GameFinished() { return m_isGameFinished; }
+	void GameFinished(bool val) { m_isGameFinished = val; }	
 	bool AnimationRunning() { return m_isAnimationRunning; }
 	void AnimationRunning(bool val) { m_isAnimationRunning = val; }
 private:
@@ -69,7 +72,7 @@ private:
 	bool m_isGameStarted;
 	bool m_isPause;
 	bool m_isMultiplayer;
-
+	bool m_isGameFinished;	
 	bool m_isAnimationRunning;
 	float m_animationTime;
 	float m_generalAnimationProgress;
@@ -81,11 +84,14 @@ private:
 	DirectX::XMFLOAT3 m_currentRotation;
 	DirectX::XMFLOAT3 m_targetRotation;
 
+	DirectX::XMVECTOR m_basicTranslation_y;
+	DirectX::XMVECTOR m_basicTranslation_z;
+	DirectX::XMVECTOR m_basicTranslation_x;
+	DirectX::XMVECTOR m_basicVector;
+
 	DirectX::XMVECTOR m_initialTranslation_v_x;
 	DirectX::XMVECTOR m_currentTranslation_v_x;
-	DirectX::XMVECTOR m_targetTranslation_v_x;
-	DirectX::XMVECTOR m_basicTranslation_x;
-	DirectX::XMVECTOR m_basicVector;	
+	DirectX::XMVECTOR m_targetTranslation_v_x;	
 
 	DirectX::XMVECTOR m_initialTranslation_v_y;
 	DirectX::XMVECTOR m_currentTranslation_v_y;
@@ -94,10 +100,6 @@ private:
 	DirectX::XMVECTOR m_initialTranslation_v_z;
 	DirectX::XMVECTOR m_currentTranslation_v_z;
 	DirectX::XMVECTOR m_targetTranslation_v_z;
-
-	DirectX::XMVECTOR m_basicTranslation_y;
-	DirectX::XMVECTOR m_basicTranslation_z;
-
 
 	float m_initialGT;
 	float m_currentGT;

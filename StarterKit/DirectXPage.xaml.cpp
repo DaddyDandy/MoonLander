@@ -89,6 +89,16 @@ void DirectXPage::OnRendering(Object^ sender, Object^ args)
 	m_renderer->Update(m_timer->Total, m_timer->Delta);
 	m_renderer->Render();
 	m_renderer->Present();
+	if (m_renderer->GameFinished())
+	{
+		m_renderer->GameFinished(false);
+		m_timer = ref new BasicTimer();
+	}
+	if (m_renderer->GameStarted())
+	{
+		m_renderer->GameStarted(false);
+		m_timer = ref new BasicTimer();
+	}
 }
 
 void DirectXPage::SaveInternalState(IPropertySet^ state)
@@ -148,6 +158,9 @@ void DirectXPage::OnKeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::
 void MoonLander::DirectXPage::New_Game_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	this->MenuButtons->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+	this->BtnNewGame->IsEnabled = false;
+	this->BtnRestart->IsEnabled = true;
+	this->BtnContinue->IsEnabled = true;
 	m_renderer->GameStarted(true);
 	m_renderer->Pause(false);
 }
@@ -159,4 +172,21 @@ void MoonLander::DirectXPage::Exit_Click(Platform::Object^ sender, Windows::UI::
 	m_renderer->GameStarted(false);
 	m_renderer->Pause(false);
 	Application::Current->Exit();
+}
+
+
+void MoonLander::DirectXPage::Restart_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	this->MenuButtons->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+	m_renderer->GameStarted(true);
+	m_renderer->Pause(false);
+	m_renderer->RestartGame();
+}
+
+
+void MoonLander::DirectXPage::Continue_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	this->MenuButtons->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+	m_renderer->GameStarted(true);
+	m_renderer->Pause(false);
 }
