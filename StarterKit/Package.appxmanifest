@@ -1,27 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
-  <Identity Name="MoonLander-Clean" Publisher="CN=VSD3DMoonLander" Version="1.0.0.0" />
+<Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
+  <Identity Name="MoonLander-Clean" Publisher="CN=VSD3DMoonLander" Version="1.1.0.0" />
   <Properties>
     <DisplayName>Moon Lander</DisplayName>
     <PublisherDisplayName>Dev Cooper</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Prerequisites>
-    <OSMinVersion>6.2.1</OSMinVersion>
-    <OSMaxVersionTested>6.2.1</OSMaxVersionTested>
+    <OSMinVersion>6.3</OSMinVersion>
+    <OSMaxVersionTested>6.3</OSMaxVersionTested>
   </Prerequisites>
   <Resources>
     <Resource Language="x-generate" />
   </Resources>
-  <Applications>    
-    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="MoonLander.App">      
-      <VisualElements DisplayName="Moon Lander" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="Game" ForegroundText="light" BackgroundColor="#742894">
-        <DefaultTile ShowName="logoOnly" />
-        <SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#ffffff" />
-        <InitialRotationPreference>
-          <Rotation Preference="landscape" />
-        </InitialRotationPreference>
-      </VisualElements>
+  <Applications>
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="MoonLander.App">
+      <m2:VisualElements DisplayName="Moon Lander" Description="Game" BackgroundColor="#742894" ForegroundText="light" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png">
+        <m2:DefaultTile>
+          <m2:ShowNameOnTiles>
+            <m2:ShowOn Tile="square150x150Logo" />
+          </m2:ShowNameOnTiles>
+        </m2:DefaultTile>
+        <m2:InitialRotationPreference>
+          <m2:Rotation Preference="landscape" />
+        </m2:InitialRotationPreference>
+        <m2:SplashScreen BackgroundColor="#ffffff" Image="Assets\SplashScreen.png" />
+      </m2:VisualElements>
     </Application>
   </Applications>
 </Package>
